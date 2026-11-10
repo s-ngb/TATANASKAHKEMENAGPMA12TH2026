@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Tata Naskah Dinas Kemenag RI - PMA No. 12 Th 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            mandiri: {
+              navy: '#00264d',
+              blue: '#003d79',
+              light: '#005bb5',
+              accent: '#f59e0b',
+              sky: '#e8f0fe'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&family=Bookman+Old+Style&display=swap');
+
+    .font-arial {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .font-bookman {
+      font-family: 'Bookman Old Style', Georgia, serif;
+    }
+
+    /* Ukuran Kertas Resmi PMA 12 Tahun 2026 */
+    /* Ruang tepi / margin: Kiri min 3cm, Kanan min 2cm, Bawah min 2.5cm, Atas 2 spasi dari kop */
+    .sheet-a4 {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 15mm 20mm 25mm 30mm;
+      box-sizing: border-box;
+    }
+    .sheet-f4 {
+      width: 215mm;
+      min-height: 330mm;
+      padding: 15mm 20mm 25mm 30mm;
+      box-sizing: border-box;
+    }
+
+    /* Garis Kop Standar Kementerian Agama RI */
+    .kop-kemenag-line {
+      border-top: 2.5pt solid #000;
+      border-bottom: 0.75pt solid #000;
+      height: 4.5pt;
+      margin-top: 4px;
+      margin-bottom: 14px;
+    }
+
+    /* Cetak Resmi Presisi */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-area {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+      }
+      .paper-preview {
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        width: 100% !important;
+        page-break-after: always;
+      }
+      @page {
+        margin: 0mm;
+      }
+      .page-f4 {
+        size: 215mm 330mm portrait;
+      }
+      .page-a4 {
+        size: 210mm 297mm portrait;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #003d79;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden font-arial">
+
+  <!-- ================= SIDEBAR MENU UTAMA (KIRI) ================= -->
+  <aside class="w-64 bg-mandiri-navy text-white flex flex-col flex-shrink-0 z-30 shadow-xl no-print">
+    <!-- Brand / Header Sidebar -->
+    <div class="p-4 border-b border-mandiri-blue flex items-center gap-3 bg-mandiri-navy">
+      <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 shadow">
+        <i class="fa-solid fa-stamp text-mandiri-blue text-xl"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-sm tracking-wide text-white leading-tight">Naskah Dinas</h1>
+        <p class="text-[11px] text-amber-300 font-semibold">PMA NO. 12 TH 2026</p>
+      </div>
+    </div>
+
+    <!-- Navigasi Menu Samping -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+      <div class="text-[10px] font-bold uppercase tracking-wider text-slate-300 px-3 py-1">Menu Utama</div>
+
+      <!-- 1. Tombol Pilih Jenis Surat -->
+      <button onclick="setActiveTab('step1')" id="nav-step1" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition bg-mandiri-light text-white shadow-sm">
+        <i class="fa-solid fa-file-circle-plus w-5"></i>
+        <span>1. Pilih Jenis Naskah</span>
+      </button>
+
+      <!-- 2. Tombol Penomoran -->
+      <button onclick="setActiveTab('step2')" id="nav-step2" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-slate-200 hover:bg-mandiri-blue">
+        <i class="fa-solid fa-arrow-down-1-9 w-5"></i>
+        <span>2. Atur Nomor Urut</span>
+      </button>
+
+      <!-- 3. Tombol Isi Naskah -->
+      <button onclick="setActiveTab('step3')" id="nav-step3" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-slate-200 hover:bg-mandiri-blue">
+        <i class="fa-solid fa-pen-to-square w-5"></i>
+        <span>3. Tulis Isi Naskah</span>
+      </button>
+
+      <!-- 4. Tombol Penandatangan & Cetak -->
+      <button onclick="setActiveTab('step4')" id="nav-step4" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-slate-200 hover:bg-mandiri-blue">
+        <i class="fa-solid fa-signature w-5"></i>
+        <span>4. Penandatangan</span>
+      </button>
+
+      <div class="text-[10px] font-bold uppercase tracking-wider text-slate-300 px-3 pt-3 py-1">Penyimpanan & Arsip</div>
+
+      <!-- 5. Buku Register Agenda / Spreadsheet -->
+      <button onclick="setActiveTab('step5')" id="nav-step5" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition text-slate-200 hover:bg-mandiri-blue">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-table-list w-5"></i>
+          <span>Buku Register</span>
+        </div>
+        <span id="badgeCount" class="text-xs bg-amber-400 text-mandiri-navy font-bold px-1.5 py-0.5 rounded-full">0</span>
+      </button>
+
+      <!-- 6. Logo & Profil Satker -->
+      <button onclick="setActiveTab('step6')" id="nav-step6" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-slate-200 hover:bg-mandiri-blue">
+        <i class="fa-solid fa-sliders w-5"></i>
+        <span>Kop & Upload Logo</span>
+      </button>
+    </nav>
+
+    <!-- Footer Sidebar Reset Tahunan -->
+    <div class="p-3 bg-mandiri-navy border-t border-mandiri-blue text-xs">
+      <div class="flex items-center justify-between text-slate-300 mb-1">
+        <span>Tahun Takwim:</span>
+        <span id="currentYearDisplay" class="font-bold text-amber-300">2026</span>
+      </div>
+      <button onclick="promptResetYear()" class="w-full mt-1 flex items-center justify-center gap-2 bg-mandiri-blue hover:bg-rose-700 text-white py-1.5 rounded text-xs transition">
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <span>Reset Nomor Baru</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= KONTEN TENGAH / FORM WORKFLOW ================= -->
+  <main class="w-[460px] bg-white border-r border-slate-200 flex flex-col flex-shrink-0 overflow-y-auto no-print">
+    <!-- Header Top Tab -->
+    <div class="p-4 bg-mandiri-blue text-white shadow-sm flex items-center justify-between">
+      <div>
+        <h2 id="tabTitle" class="font-bold text-base">Tahap 1: Pilih Jenis Naskah</h2>
+        <p id="tabSubtitle" class="text-xs text-sky-100">Format Baku Lampiran PMA No. 12 Tahun 2026</p>
+      </div>
+      <span id="stepIndicator" class="text-xs font-bold bg-white text-mandiri-blue px-2 py-0.5 rounded shadow">1/4</span>
+    </div>
+
+    <div class="p-5 space-y-4 flex-1">
+
+      <!-- ================= SUB-MENU 1: PILIH JENIS SURAT ================= -->
+      <div id="content-step1" class="space-y-3">
+        <label class="block text-xs font-bold uppercase text-slate-600">Pilih Template Naskah Dinas:</label>
+        
+        <!-- Surat Dinas (Hal 25 & Penomoran Hal 55) -->
+        <div onclick="selectDocType('SURAT_DINAS')" class="doc-card border-2 border-mandiri-blue bg-mandiri-sky/40 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SURAT_DINAS">
+          <div class="text-mandiri-blue mt-1"><i class="fa-solid fa-envelope text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-mandiri-navy">Surat Dinas Eksternal</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-mono">B/...</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-0.5">Rumus: [Kategori]/[No]/[Kode Jabatan]/[Kode Klasifikasi]/[Bulan]/[Tahun]</p>
+          </div>
+        </div>
+
+        <!-- Surat Keterangan Seseorang (Hal 31 & Kode SKet Hal 52, 56) -->
+        <div onclick="selectDocType('SURAT_KETERANGAN')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SURAT_KETERANGAN">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-id-badge text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Keterangan Seseorang</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">SKet</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode Resmi: SKet (Contoh: 02/B.IV/KP.01/SKet/01/2026)</p>
+          </div>
+        </div>
+
+        <!-- Surat Keterangan Peristiwa (Hal 32 & Kode SKet Hal 52, 56) -->
+        <div onclick="selectDocType('SKET_PERISTIWA')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SKET_PERISTIWA">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-calendar-day text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Keterangan Peristiwa</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">SKet</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: SKet - Menerangkan peristiwa pada hari, tanggal, jam.</p>
+          </div>
+        </div>
+
+        <!-- Berita Acara (Hal 29 & Kode BA Hal 52, 55) -->
+        <div onclick="selectDocType('BERITA_ACARA')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-BERITA_ACARA">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-handshake text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Berita Acara</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">BA</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: BA (Contoh: 17/B.IV/KP.01/BA/04/2026)</p>
+          </div>
+        </div>
+
+        <!-- Surat Kuasa (Hal 27 & Kode SKu Hal 52, 56) -->
+        <div onclick="selectDocType('SURAT_KUASA')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SURAT_KUASA">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-file-contract text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Kuasa</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">SKu</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: SKu (Contoh: 17/B.IV/KP.01/SKu/04/2026)</p>
+          </div>
+        </div>
+
+        <!-- Surat Pengantar (Hal 34 & Kode SPen Hal 52, 56) -->
+        <div onclick="selectDocType('SURAT_PENGANTAR')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SURAT_PENGANTAR">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-box-open text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Pengantar</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">SPen</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: SPen (Contoh: 17/B.IV/KP.01/SPen/04/2026)</p>
+          </div>
+        </div>
+
+        <!-- Pengumuman (Hal 35 & Kode Peng Hal 52, 57) -->
+        <div onclick="selectDocType('PENGUMUMAN')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-PENGUMUMAN">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-bullhorn text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Pengumuman</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">Peng</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: Peng (Contoh: 17/B.IV/KP.01/Peng/04/2026)</p>
+          </div>
+        </div>
+
+        <!-- Rekomendasi (Hal 42 & Kode Rek Hal 53) -->
+        <div onclick="selectDocType('REKOMENDASI')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-REKOMENDASI">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-award text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Rekomendasi</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">Rek</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: Rek - Format Dasar, Menimbang, Memberi Rekomendasi.</p>
+          </div>
+        </div>
+
+        <!-- SPTJM (Hal 44 & Kode SPTJM Hal 53) -->
+        <div onclick="selectDocType('SPTJM')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SPTJM">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-shield-halved text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">SPTJM</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">SPTJM</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: SPTJM - Surat Pernyataan Tanggung Jawab Mutlak.</p>
+          </div>
+        </div>
+
+        <!-- Surat Pernyataan (Hal 45 & Kode SPer Hal 53) -->
+        <div onclick="selectDocType('SURAT_PERNYATAAN')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SURAT_PERNYATAAN">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-file-pen text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Pernyataan</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">SPer</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: SPer - Kaki tanda tangan TANPA cap dinas.</p>
+          </div>
+        </div>
+
+        <!-- Surat Tugas (Hal 14 & Penomoran Hal 54) -->
+        <div onclick="selectDocType('SURAT_TUGAS')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SURAT_TUGAS">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-user-check text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Tugas (Penugasan)</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Rumus: [Nomor]/[Kode Jabatan]/[Kode Klasifikasi]/[Bulan]/[Tahun]</p>
+          </div>
+        </div>
+
+        <!-- Nota Dinas (Hal 16 & Penomoran Hal 54) -->
+        <div onclick="selectDocType('NOTA_DINAS')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-NOTA_DINAS">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-note-sticky text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Nota Dinas (Korespondensi Internal)</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Rumus: [Nomor]/[Kode Jabatan]/[Kode Klasifikasi]/[Bulan]/[Tahun]</p>
+          </div>
+        </div>
+
+        <!-- Surat Undangan Internal (Hal 22) -->
+        <div onclick="selectDocType('UNDANGAN_INTERNAL')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-UNDANGAN_INTERNAL">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-calendar-check text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Undangan Internal</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Format: Yth., Hari, Tanggal, Waktu, Tempat, Acara.</p>
+          </div>
+        </div>
+
+        <!-- Telaahan Staf (Hal 39 - Kode: Tanpa Kode Khusus) -->
+        <div onclick="selectDocType('TELAAHAN_STAF')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-TELAAHAN_STAF">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-magnifying-glass-chart text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Telaahan Staf</h3>
+              <span class="text-[10px] bg-emerald-700 text-white px-2 py-0.2 rounded font-semibold">Tanpa Kop</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Sistematika I s.d VI (Persoalan s.d Saran) Tanpa Kop Naskah Dinas.</p>
+          </div>
+        </div>
+
+        <!-- Laporan (Hal 37) -->
+        <div onclick="selectDocType('LAPORAN')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-LAPORAN">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-book text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Laporan Kegiatan</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Sistematika Huruf A s.d E: Pendahuluan hingga Penutup.</p>
+          </div>
+        </div>
+
+        <!-- Surat Keputusan SK (F4 - Hal 65) -->
+        <div onclick="selectDocType('SK')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SK">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-gavel text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Keputusan (SK)</h3>
+              <span class="text-[10px] bg-amber-600 text-white px-2 py-0.2 rounded font-semibold">Wajib F4 (Folio)</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Format: Kertas F4, Font Bookman Old Style 12pt, Diktum.</p>
+          </div>
+        </div>
+
+        <!-- STTPP (Hal 57 & Kode STTPP Hal 53) -->
+        <div onclick="selectDocType('STTPP')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-STTPP">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-graduation-cap text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Surat Tanda Tamat Pelatihan (STTPP)</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">STTPP</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: STTPP (Contoh: 333/BP2K/KP.01/STTPP/11/2026)</p>
+          </div>
+        </div>
+
+        <!-- Sertifikat (Hal 58 & Kode Sert Hal 53) -->
+        <div onclick="selectDocType('SERTIFIKAT')" class="doc-card border border-slate-200 p-3 rounded-lg cursor-pointer hover:border-mandiri-blue transition flex items-start gap-3" id="card-SERTIFIKAT">
+          <div class="text-slate-500 mt-1"><i class="fa-solid fa-certificate text-lg"></i></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-xs text-slate-700">Sertifikat Kegiatan / Pelatihan</h3>
+              <span class="text-[10px] bg-mandiri-blue text-white px-2 py-0.2 rounded font-semibold">A4</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold">Sert</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kode: Sert (Contoh: 233/B.IV/KP.01/Sert/08/2026)</p>
+          </div>
+        </div>
+
+        <button onclick="nextStep(2)" class="w-full mt-3 bg-mandiri-blue hover:bg-mandiri-navy text-white font-semibold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition">
+          <span>Lanjut ke Penomoran</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- ================= SUB-MENU 2: ATUR NOMOR URUT OTOMATIS ================= -->
+      <div id="content-step2" class="space-y-4 hidden">
+        <div class="bg-mandiri-sky border border-blue-200 p-3 rounded-lg text-xs text-mandiri-navy leading-relaxed">
+          <i class="fa-solid fa-circle-info mr-1 text-mandiri-blue"></i>
+          Penomoran naskah dinas mengacu langsung pada <b>PMA No. 12 Tahun 2026 Bab III (Halaman 52-57)</b> dengan angka Arab, kode naskah khusus/lainnya, dan pemisah garis miring (<code>/</code>).
+        </div>
+
+        <!-- Pratinjau Rumus Nomor Aktif -->
+        <div class="p-3 bg-slate-50 border border-slate-300 rounded-lg space-y-1.5">
+          <span class="text-[11px] font-bold text-slate-500 uppercase">Rumus Penomoran Baku PMA 12:</span>
+          <div id="displayRumusBaku" class="font-mono text-xs font-bold text-mandiri-blue bg-white p-2 rounded border">
+            <!-- Rumus nomor aktif -->
+          </div>
+          <div class="flex justify-between items-center text-xs pt-1">
+            <span class="text-slate-500">Hasil Nomor Naskah:</span>
+            <span id="displayNomorNaskahAktif" class="font-mono font-bold text-emerald-700 text-xs">-</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Urut Terakhir Dicatat:</label>
+          <div class="flex gap-2">
+            <input type="number" id="inputLastNumber" oninput="calculateNextNumber()" class="border border-slate-300 rounded-lg p-2 text-sm w-full font-bold focus:ring-2 focus:ring-mandiri-blue outline-none" value="124">
+            <button onclick="setNumberPlusOne()" class="bg-slate-200 hover:bg-slate-300 px-3 rounded text-xs font-bold text-slate-700">+1</button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">Operator cukup memasukkan nomor urut terakhir, sistem otomatis berlanjut ke nomor berikutnya.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Baru Terbit:</label>
+            <div id="previewNextNumber" class="border border-slate-300 bg-slate-100 rounded-lg p-2 text-sm font-bold text-mandiri-blue text-center">125</div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Bulan & Tahun (Arab):</label>
+            <div id="previewMonthYear" class="border border-slate-300 bg-slate-100 rounded-lg p-2 text-sm font-semibold text-slate-700 text-center">11/2026</div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kode Jabatan / Satuan Kerja:</label>
+          <input type="text" id="inputKodeSatker" oninput="refreshPreview()" class="border border-slate-300 rounded-lg p-2 text-sm w-full font-mono uppercase focus:ring-2 focus:ring-mandiri-blue outline-none" value="Mts.14.08">
+          <p class="text-[10px] text-slate-500 mt-1">Contoh: B.IV (Kepala Biro Ortala), SJ (Sekretaris Jenderal), Mts.14.08 (Kepala MTsN)</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kode Klasifikasi Arsip:</label>
+          <input type="text" id="inputKodeKlasifikasi" oninput="refreshPreview()" class="border border-slate-300 rounded-lg p-2 text-sm w-full font-mono uppercase focus:ring-2 focus:ring-mandiri-blue outline-none" value="PP.01">
+          <p class="text-[10px] text-slate-500 mt-1">Contoh: PP.00 / PP.01 (Pendidikan), KP.01 (Kepegawaian), HM.01 (Humas), OT.01 (Ortala)</p>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="nextStep(1)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-lg text-xs transition">Kembali</button>
+          <button onclick="nextStep(3)" class="w-2/3 bg-mandiri-blue hover:bg-mandiri-navy text-white font-semibold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition">
+            <span>Lanjut Isi Naskah</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SUB-MENU 3: FORM ISI NASKAH ================= -->
+      <div id="content-step3" class="space-y-4 hidden">
+        <div id="formFieldsContainer" class="space-y-3">
+          <!-- Form dinamis disisipkan di sini sesuai tipe surat -->
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="nextStep(2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-lg text-xs transition">Kembali</button>
+          <button onclick="nextStep(4)" class="w-2/3 bg-mandiri-blue hover:bg-mandiri-navy text-white font-semibold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition">
+            <span>Atur Penandatangan</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SUB-MENU 4: PENANDATANGAN & CETAK ================= -->
+      <div id="content-step4" class="space-y-4 hidden">
+        <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-xs text-amber-900 leading-relaxed">
+          <i class="fa-solid fa-user-pen mr-1 text-amber-600"></i>
+          Pilih status mandat penandatangan sesuai <b>PMA No. 12 Tahun 2026 Bab V (Hal 74–76)</b>: Definitif, Atas Nama (a.n.), Untuk Beliau (u.b.), Pelaksana Tugas (Plt.), atau Pelaksana Harian (Plh.).
+        </div>
+
+        <!-- Status Mandat Penandatangan PMA 12 Hal 74-76 -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Status / Jenis Wewenang Penandatangan:</label>
+          <select id="signerStatus" onchange="handleSignerStatusChange(this.value)" class="w-full border border-slate-300 rounded-lg p-2 text-xs font-semibold bg-slate-50 text-mandiri-navy focus:ring-2 focus:ring-mandiri-blue outline-none">
+            <option value="DEFINITIF">Pejabat Definitif Langsung</option>
+            <option value="AN">Atas Nama (a.n.)</option>
+            <option value="UB">Untuk Beliau (u.b. setelah a.n.)</option>
+            <option value="PLT">Pelaksana Tugas (Plt.)</option>
+            <option value="PLH">Pelaksana Harian (Plh.)</option>
+          </select>
+        </div>
+
+        <!-- Field Tambahan Jika a.n. atau u.b. -->
+        <div id="mandatFields" class="space-y-2 bg-slate-50 p-2.5 rounded border border-slate-200 hidden text-xs">
+          <div>
+            <label class="font-semibold text-slate-700">Jabatan Pemberi Mandat (Baris 1 a.n.):</label>
+            <input type="text" id="signerPemberiMandat" oninput="refreshPreview()" class="w-full border rounded p-1.5 text-xs font-medium" value="Menteri Agama">
+          </div>
+          <div id="rowJabatanPelimpah" class="hidden">
+            <label class="font-semibold text-slate-700">Jabatan Pelimpah Kuasa (Baris 2):</label>
+            <input type="text" id="signerPelimpahKuasa" oninput="refreshPreview()" class="w-full border rounded p-1.5 text-xs font-medium" value="Sekretaris Jenderal">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Jabatan Penandatangan:</label>
+          <input type="text" id="signerJabatan" oninput="refreshPreview()" class="border border-slate-300 rounded-lg p-2 text-sm w-full focus:ring-2 focus:ring-mandiri-blue outline-none" value="Kepala Madrasah">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Pejabat (Sesuai PMA: Huruf Kapital Tanpa Gelar):</label>
+          <input type="text" id="signerNama" oninput="refreshPreview()" class="border border-slate-300 rounded-lg p-2 text-sm w-full font-bold uppercase focus:ring-2 focus:ring-mandiri-blue outline-none" value="MUHAMMAD IKHSAN">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">NIP (Nomor Induk Pegawai):</label>
+          <input type="text" id="signerNIP" oninput="refreshPreview()" class="border border-slate-300 rounded-lg p-2 text-sm w-full focus:ring-2 focus:ring-mandiri-blue outline-none" value="197805122005011004">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tempat / Kota Pembuatan:</label>
+          <input type="text" id="signerKota" oninput="refreshPreview()" class="border border-slate-300 rounded-lg p-2 text-sm w-full focus:ring-2 focus:ring-mandiri-blue outline-none" value="Landak">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Cetak / Surat:</label>
+          <input type="date" id="signerTanggal" onchange="handleDateChange()" class="border border-slate-300 rounded-lg p-2 text-sm w-full focus:ring-2 focus:ring-mandiri-blue outline-none">
+        </div>
+
+        <!-- Tombol Aksi Simpan & Cetak -->
+        <div class="space-y-2 pt-2">
+          <button onclick="simpanKeBukuRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 shadow transition">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Simpan ke Buku Register</span>
+          </button>
+
+          <button onclick="window.print()" class="w-full bg-mandiri-blue hover:bg-mandiri-navy text-white font-bold py-3 rounded-lg text-xs flex items-center justify-center gap-2 shadow-lg transition">
+            <i class="fa-solid fa-print"></i>
+            <span>Cetak / Unduh PDF Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SUB-MENU 5: BUKU REGISTER & SPREADSHEET ================= -->
+      <div id="content-step5" class="space-y-4 hidden">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xs font-bold uppercase text-slate-600">Arsip Surat Keluar</h3>
+          <button onclick="exportToCSV()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded font-semibold flex items-center gap-1 shadow-sm">
+            <i class="fa-solid fa-file-excel"></i>
+            <span>Unduh Excel / CSV</span>
+          </button>
+        </div>
+
+        <!-- Webhook URL Google Sheets -->
+        <div class="bg-slate-50 border p-2.5 rounded text-xs space-y-1">
+          <label class="font-bold text-slate-700 flex items-center gap-1">
+            <i class="fa-brands fa-google-drive text-emerald-600"></i>
+            <span>URL Webhook Google Sheets (Opsional):</span>
+          </label>
+          <input type="text" id="webhookUrl" placeholder="https://script.google.com/macros/s/.../exec" onchange="saveWebhook()" class="w-full border rounded p-1.5 text-[11px] outline-none">
+          <p class="text-[10px] text-slate-500">Tersinkronisasi otomatis ke Google Spreadsheet saat tombol Simpan ditekan.</p>
+        </div>
+
+        <!-- Tabel Register Ringkas -->
+        <div class="border rounded-lg overflow-hidden max-h-[350px] overflow-y-auto">
+          <table class="w-full text-[11px] text-left">
+            <thead class="bg-mandiri-blue text-white sticky top-0">
+              <tr>
+                <th class="p-2">No</th>
+                <th class="p-2">Nomor Naskah</th>
+                <th class="p-2">Perihal</th>
+                <th class="p-2">Tgl</th>
+              </tr>
+            </thead>
+            <tbody id="registerTableBody" class="divide-y divide-slate-200">
+            </tbody>
+          </table>
+        </div>
+
+        <button onclick="clearRegisterData()" class="text-xs text-rose-600 hover:underline flex items-center gap-1">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Hapus Seluruh Riwayat Lokal</span>
+        </button>
+      </div>
+
+      <!-- ================= SUB-MENU 6: KOP & UPLOAD LOGO ================= -->
+      <div id="content-step6" class="space-y-4 hidden">
+        <div class="border-2 border-dashed border-mandiri-blue/40 rounded-xl p-4 text-center bg-mandiri-sky/20">
+          <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center bg-white rounded-lg shadow-sm border p-1">
+            <img id="logoPreview" src="https://placehold.co/120x120/003366/ffffff?text=Logo+Kemenag" alt="Logo Kemenag" class="max-h-full max-w-full object-contain">
+          </div>
+          <label class="inline-block bg-mandiri-blue hover:bg-mandiri-navy text-white text-xs font-semibold px-4 py-2 rounded-lg cursor-pointer transition shadow">
+            <i class="fa-solid fa-cloud-arrow-up mr-1"></i>
+            <span>Upload Logo Manual</span>
+            <input type="file" id="logoUploadInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+          </label>
+          <p class="text-[11px] text-slate-500 mt-2">Sesuai Lampiran Hal. 47-50 PMA 12/2026: Logo terletak di margin kiri kepala naskah dinas, batas atas sejajar tulisan Kementerian Agama Republik Indonesia.</p>
+        </div>
+
+        <!-- Preset Kop Standar Kemenag Sesuai Halaman 48-50 -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Preset Template Kop Surat:</label>
+          <select id="presetKopSelect" onchange="applyPresetKop(this.value)" class="w-full border rounded p-1.5 text-xs bg-slate-50 font-medium">
+            <option value="MADRASAH">Madrasah Tsanawiyah / Aliyah / Ibtidaiyah Negeri</option>
+            <option value="KUA">Kantor Urusan Agama (KUA) Kecamatan</option>
+            <option value="KANKEMENAG">Kantor Kemenag Kabupaten / Kota</option>
+            <option value="KANWIL">Kantor Wilayah Kemenag Provinsi</option>
+            <option value="PUSAT">Sekretariat Jenderal / Eselon I Pusat</option>
+          </select>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <label class="font-semibold text-slate-700">Baris 1 (Instansi Pusat - Arial 14pt Tebal):</label>
+            <input type="text" id="kopBaris1" value="KEMENTERIAN AGAMA REPUBLIK INDONESIA" oninput="refreshPreview()" class="w-full border rounded p-1.5 font-bold uppercase">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700">Baris 2 (Kantor Kemenag Kab/Kota atau Kanwil - Arial 12pt Tebal):</label>
+            <input type="text" id="kopBaris2" value="KANTOR KEMENTERIAN AGAMA KABUPATEN LANDAK" oninput="refreshPreview()" class="w-full border rounded p-1.5 font-bold uppercase">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700">Baris 3 (Nama Madrasah / KUA / Satker - Arial 11pt Tebal):</label>
+            <input type="text" id="kopBaris3" value="MADRASAH TSANAWIYAH NEGERI 1 LANDAK" oninput="refreshPreview()" class="w-full border rounded p-1.5 font-bold uppercase text-mandiri-blue">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700">Baris 4 (Alamat Lengkap, Telepon, Website - Arial 9pt):</label>
+            <textarea id="kopBaris4" rows="2" oninput="refreshPreview()" class="w-full border rounded p-1.5 text-[11px]">Jalan Pangeran Cinata Nomor 12 Ngabang, Kabupaten Landak, Kalimantan Barat 79357
+Telepon: (0563) 21102; Faksimile: (0563) 21103; Website: www.kemenag.go.id</textarea>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= LEMBAR PRATINJAU KERTAS DINAMIS (KANAN) ================= -->
+  <section class="flex-1 bg-slate-200 overflow-y-auto p-8 flex justify-center items-start print-area">
+    <div id="paperContainer" class="paper-preview sheet-a4 bg-white shadow-2xl relative">
+      <!-- Isi Konten Surat Sesuai Format PMA 12 Tahun 2026 -->
+      <div id="documentContent">
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= JAVASCRIPT LOGIC LENGKAP ================= -->
+  <script>
+    const appState = {
+      docType: 'SURAT_DINAS',
+      currentStep: 1,
+      lastNumber: 124,
+      nextNumber: 125,
+      year: 2026,
+      selectedDate: new Date(),
+      kodeKlasifikasi: 'PP.01',
+      kodeSatker: 'Mts.14.08',
+      
+      // Data Penandatangan
+      signer: {
+        nama: 'MUHAMMAD IKHSAN',
+        nip: '197805122005011004',
+        jabatan: 'Kepala Madrasah',
+        kota: 'Landak',
+        tanggalString: '10 November 2026'
+      },
+
+      // Kop Surat
+      kop: {
+        baris1: 'KEMENTERIAN AGAMA REPUBLIK INDONESIA',
+        baris2: 'KANTOR KEMENTERIAN AGAMA KABUPATEN LANDAK',
+        baris3: 'MADRASAH TSANAWIYAH NEGERI 1 LANDAK',
+        baris4: 'Jalan Pangeran Cinata Nomor 12 Ngabang, Kabupaten Landak, Kalimantan Barat 79357\nTelepon: (0563) 21102; Faksimile: (0563) 21103; Website: www.kemenag.go.id',
+        logoDataUrl: 'https://placehold.co/120x120/003366/ffffff?text=Logo+Kemenag'
+      },
+
+      // Field Dinamis per Jenis Dokumen Sesuai Format PMA 12/2026
+      fields: {
+        // Surat Dinas (Hal 25)
+        sifat: 'Biasa',
+        lampiran: '-',
+        hal: 'Pemberitahuan Ujian Asesmen Madrasah',
+        tujuan: 'Yth. Kepala Kantor Wilayah Kementerian Agama\nProvinsi Kalimantan Barat\ndi Pontianak',
+        isiDinasBuka: 'Sehubungan dengan pelaksanaan kegiatan Asesmen Madrasah Tahun Pelajaran 2025/2026, bersama ini kami sampaikan jadwal dan teknis penyelenggaraan asesmen di lingkungan satuan kerja kami.',
+        isiDinasIsi: 'Pelaksanaan asesmen direncanakan berlangsung mulai tanggal 16 s.d. 21 November 2026 dengan sistem Computer-Based Test (CBT) yang bertempat di laboratorium madrasah.',
+        isiDinasTutup: 'Demikian surat ini disampaikan untuk menjadi periksa dan pedoman sebagaimana mestinya. Atas perhatian dan kerja samanya diucapkan terima kasih.',
+        tembusan: '1. Kepala Kantor Kementerian Agama Kabupaten Landak;\n2. Pengawas Madrasah.',
+
+        // Surat Keterangan Seseorang (Hal 31 - Kode SKet Hal 52, 56)
+        sketJudul: 'TENTANG PEGAWAI AKTIF',
+        sketNama: 'AHMAD FAUZI',
+        sketNip: '198501012010011001',
+        sketPangkat: 'Penata Muda Tk. I, III/b',
+        sketJabatan: 'Guru Ahli Pertama',
+        sketIsi: 'Dengan ini menerangkan bahwa nama pegawai yang bersangkutan di atas adalah benar-benar bertugas dan berkinerja secara aktif pada Madrasah Tsanawiyah Negeri 1 Landak terhitung sejak tanggal 01 Januari 2020 sampai dengan sekarang.\n\nDemikian surat keterangan ini dibuat dengan sebenar-benarnya untuk digunakan sebagaimana mestinya.',
+
+        // Surat Keterangan Hal/Peristiwa (Hal 32 - Kode SKet Hal 52, 56)
+        sketPeristiwaJudul: 'TENTANG KEHILANGAN DOKUMEN IJAZAH',
+        sketPeristiwaHari: 'Senin',
+        sketPeristiwaTgl: '10 November 2026',
+        sketPeristiwaJam: '10.30 WIB',
+        sketPeristiwaUraian: 'Telah terjadi kehilangan dokumen arsip ijazah asli kelulusan tahun pelajaran 2024/2025 atas nama siswa Rian Hidayat karena musibah banjir bandang di kediaman yang bersangkutan.',
+
+        // Surat Pernyataan (Hal 45 - Kode SPer Hal 53)
+        sperPernyataan: 'Dengan ini menyatakan bahwa dokumen kelengkapan administrasi kenaikan pangkat periode April 2027 yang saya ajukan adalah benar, sah, dan sesuai dengan dokumen aslinya. Apabila di kemudian hari terbukti dokumen tersebut tidak benar, saya bersedia menerima sanksi sesuai dengan peraturan perundang-undangan.',
+
+        // SPTJM (Hal 44 - Kode SPTJM Hal 53)
+        sptjmJudul: 'PERTANGGUNGJAWABAN MUTLAK BANTUAN OPERASIONAL SEKOLAH',
+        sptjmPernyataan: 'Dengan ini menyatakan bahwa seluruh belanja operasional dana BOS Madrasah Tsanawiyah Negeri 1 Landak Tahun Anggaran 2026 telah dilaksanakan dan dipertanggungjawabkan secara penuh sesuai petunjuk teknis dan ketentuan perundang-undangan.',
+
+        // Rekomendasi (Hal 42 - Kode Rek Hal 53)
+        rekJudul: 'BEASISWA STUDI LANJUT S2',
+        rekDasar: '1. Peraturan Menteri Agama Nomor 12 Tahun 2026 tentang Tata Naskah Dinas;\n2. Surat Edaran Dirjen Pendidikan Islam tentang Program Pengembangan SDM Guru.',
+        rekMenimbang: 'a. bahwa yang bersangkutan memiliki dedikasi dan kinerja yang sangat baik dalam proses pembelajaran;\nb. bahwa untuk meningkatkan kualifikasi akademik tenaga pendidik di lingkungan madrasah.',
+        rekPenerimaNama: 'Siti Rahmah',
+        rekPenerimaNip: '199203152019032002',
+        rekPenerimaPangkat: 'Penata Muda, III/a',
+        rekPenerimaJabatan: 'Guru Bahasa Arab',
+        rekUntuk: 'Mengikuti seleksi penerimaan beasiswa program magister (S2) Pendidikan Bahasa Arab pada Universitas Islam Negeri.',
+
+        // Telaahan Staf (Hal 39)
+        tsJudul: 'OPTIMALISASI PENGELOLAAN ARSIP ELEKTRONIK MADRASAH',
+        tsPersoalan: 'Pengelolaan berkas naskah dinas masih menggunakan pencatatan manual sehingga proses temu kembali arsip memerlukan waktu lama.',
+        tsPraAnggapan: 'Dengan beralih ke aplikasi digital tata naskah dinas, kecepatan pencarian dan keamanan arsip dapat ditingkatkan hingga 80%.',
+        tsFakta: 'Volume naskah keluar per semester mencapai 600 surat dinas dan ruang penyimpanan arsip fisik terbatas.',
+        tsAnalisis: 'Implementasi aplikasi naskah dinas berbasis web ringan tidak memerlukan server mahal dan dapat diintegrasikan langsung dengan akun Google Drive/Spreadsheet.',
+        tsSimpulan: 'Digitalisasi tata naskah dinas sesuai PMA 12 Tahun 2026 sangat mendesak dan layak diterapkan segera.',
+        tsSaran: '1. Menetapkan penggunaan aplikasi tata naskah dinas resmi mulai tahun takwim 2026;\n2. Mengadakan bimbingan teknis singkat bagi seluruh operator persuratan.',
+
+        // Laporan (Hal 37)
+        lapJudul: 'PELAKSANAAN BIMBINGAN TEKNIS TATA NASKAH DINAS TAHUN 2026',
+        lapUmum: 'Bimbingan teknis ini diselenggarakan guna menyamakan persepsi terhadap regulasi baru PMA No. 12 Tahun 2026.',
+        lapTujuan: 'Meningkatkan kompetensi tenaga administrasi madrasah dalam menyusun naskah dinas yang baku dan tertib.',
+        lapRuangLingkup: 'Sosialisasi tata naskah dinas arahan, penetapan, korespondensi, dan naskah dinas khusus.',
+        lapDasar: 'Surat Tugas Kepala Madrasah Nomor: 125/Mts.14.08/PP.01/11/2026.',
+        lapKegiatan: 'Kegiatan dilaksanakan selama 3 hari kerja bertempat di Aula Pusat Pembelajaran dengan metode pemaparan materi dan simulasi pembuatan format surat.',
+        lapHasil: 'Tersusunnya draf baku seluruh jenis naskah dinas dan pemahaman 100% peserta terhadap ketentuan penomoran angka Arab terbaru.',
+        lapSimpulan: 'Kegiatan terlaksana dengan baik, tertib, dan mencapai sasaran yang ditetapkan.',
+        lapPenutup: 'Demikian laporan ini dibuat sebagai bahan pertanggungjawaban pelaksanaan tugas.',
+
+        // Pengumuman (Hal 35 - Kode Peng Hal 52, 57)
+        pengJudul: 'LIBUR NASIONAL DAN JADWAL ASESMEN MADRASAH',
+        pengAlasan: 'Dalam rangka memperingati Hari Guru Nasional dan persiapan pelaksanaan Asesmen Akhir Semester Ganjil Tahun Pelajaran 2026/2027.',
+        pengDasar: 'Kalender Pendidikan Madrasah Tahun Pelajaran 2026/2027 Kantor Wilayah Kementerian Agama.',
+        pengIsi: '1. Kegiatan belajar mengajar tatap muka diliburkan pada tanggal 25 November 2026.\n2. Pelaksanaan Asesmen CBT Semester Ganjil dimulai serentak pada tanggal 01 Desember 2026.',
+
+        // Surat Pengantar (Hal 34 - Kode SPen Hal 52, 56)
+        spTujuan: 'Kepala Kantor Kementerian Agama Kabupaten Landak\nC.q. Seksi Pendidikan Islam\ndi Tempat',
+        spBarang: 'Berkas Laporan Pertanggungjawaban (LPJ) Asesmen Madrasah Semester Ganjil TP 2026/2027',
+        spBanyaknya: '1 (satu) Berkas',
+        spKeterangan: 'Disampaikan dengan hormat untuk mendapatkan verifikasi dan pengesahan.',
+        spPenerimaJabatan: 'Pengadministrasi Seksi Pendidikan Islam',
+        spPenerimaNama: 'HENDRA WIJAYA',
+        spPenerimaNip: '198804102012011002',
+        spPenerimaTelp: '0812-3456-7890',
+
+        // Surat Tugas (Hal 14 & Penomoran Hal 54)
+        stMenimbang: 'bahwa dalam rangka memperkuat tata kelola administrasi naskah dinas di lingkungan Kementerian Agama, dipandang perlu menugaskan pegawai yang bersangkutan.',
+        stDasar: '1. Peraturan Menteri Agama Nomor 12 Tahun 2026 tentang Tata Naskah Dinas pada Kementerian Agama;\n2. DIPA Madrasah Tsanawiyah Negeri 1 Landak Tahun Anggaran 2026.',
+        stPegawai: '1. Nama     : Ahmad Fauzi\n   NIP      : 198501012010011001\n   Jabatan  : Guru Ahli Pertama\n   Peran    : Peserta Bimbingan Teknis\n\n2. Nama     : Siti Rahmah\n   NIP      : 199203152019032002\n   Jabatan  : Pranata Komputer\n   Peran    : Operator Teknis',
+        stUntuk: 'Mengikuti Workshop Penerapan Tata Naskah Dinas Baru PMA 12 Tahun 2026 yang diselenggarakan oleh Kantor Wilayah Kementerian Agama Provinsi bertempat di Aula Pusat Pembelajaran dari tanggal 12 sampai dengan 14 November 2026.',
+
+        // Berita Acara (Hal 29-30 & Kode BA Hal 52, 55)
+        baHari: 'Senin',
+        baTanggalTeks: 'sepuluh',
+        baBulanTeks: 'November',
+        baTahunTeks: 'dua ribu dua puluh enam',
+        baPihak1Nama: 'Ahmad Fauzi',
+        baPihak1NipJabatan: 'NIP. 198501012010011001, Pengelola BMN Madrasah Tsanawiyah Negeri 1 Landak',
+        baPihak2Nama: 'PT Mitra Graha Sarana',
+        baPihak2Jabatan: 'Penyedia Pengadaan Perangkat IT',
+        baUraian: '1. Serah terima barang berupa 30 unit Komputer Desktop CBT dalam kondisi baik dan berfungsi normal.\n2. Pemeriksaan kelengkapan kartu garansi dan buku manual teknis.',
+        baDasar: 'Surat Perjanjian Kerja Sama Nomor: B/55/Mts.14.08/KS.01/10/2026.',
+        baMengetahuiNama: 'MUHAMMAD IKHSAN',
+        baMengetahuiJabatan: 'Kepala Madrasah',
+
+        // Surat Kuasa (Hal 27 & Kode SKu Hal 52, 56)
+        skPemberiNama: 'MUHAMMAD IKHSAN',
+        skPemberiJabatan: 'Kepala Madrasah',
+        skPemberiAlamat: 'Jalan Pangeran Cinata No. 12 Ngabang',
+        skPemberiNip: '197805122005011004',
+        skPenerimaNama: 'Ahmad Fauzi',
+        skPenerimaJabatan: 'Bendahara Pengeluaran',
+        skPenerimaAlamat: 'Jalan Rayo Dusun Tungkul Ngabang',
+        skPenerimaNip: '198501012010011001',
+        skUntuk: 'Melakukan pengambilan buku rekening kas madrasah dan dokumen kliring perbankan pada Kantor Bank Mandiri Cabang Ngabang.',
+
+        // Nota Dinas (Hal 16 & Penomoran Hal 54)
+        ndYth: 'Kepala Kantor Kementerian Agama Kabupaten Landak',
+        ndDari: 'Kepala Madrasah Tsanawiyah Negeri 1 Landak',
+        ndHal: 'Permohonan Persetujuan Renovasi Laboratorium Komputer',
+        ndBuka: 'Sehubungan dengan kondisi ruangan laboratorium CBT yang memerlukan peremajaan instalasi listrik dan pendingin ruangan, kami sampaikan usulan perbaikan sarana pembelajaran tersebut.',
+        ndIsi: 'Berdasarkan hasil survei tim sarana dan prasarana madrasah, total estimasi kebutuhan renovasi telah disesuaikan dengan alokasi pemeliharaan gedung pada anggaran operasional berjalan.',
+        ndTutup: 'Demikian nota dinas ini disampaikan, mohon petunjuk dan arahan Bapak lebih lanjut.',
+
+        // Surat Keputusan SK (F4 - Hal 65)
+        skTentang: 'PENETAPAN TIM KERJA REFORMASI TATA NASKAH DINAS MADRASAH TSANAWIYAH NEGERI 1 LANDAK TAHUN ANGGARAN 2026',
+        skMenimbang: 'a. bahwa untuk mewujudkan tertib administrasi, efisiensi, dan kecepatan tata naskah dinas, perlu dibentuk Tim Kerja Reformasi Tata Naskah Dinas;\nb. bahwa pegawai yang tercantum namanya dalam lampiran keputusan ini dipandang cakap dan memenuhi syarat untuk ditugaskan.',
+        skMengingat: '1. Undang-Undang Nomor 20 Tahun 2003 tentang Sistem Pendidikan Nasional;\n2. Peraturan Menteri Agama Nomor 12 Tahun 2026 tentang Tata Naskah Dinas pada Kementerian Agama;\n3. Keputusan Kepala Kantor Kementerian Agama Kabupaten Landak tentang Rencana Kerja Madrasah.',
+        skDiktum1: 'Menetapkan Tim Kerja Reformasi Tata Naskah Dinas Madrasah Tsanawiyah Negeri 1 Landak Tahun Anggaran 2026 dengan susunan sebagaimana tercantum dalam lampiran keputusan ini.',
+        skDiktum2: 'Tim Kerja sebagaimana dimaksud dalam Diktum KESATU bertugas melaksanakan digitalisasi registrasi naskah dinas dan standardisasi format persuratan.',
+        skDiktum3: 'Keputusan ini mulai berlaku pada tanggal ditetapkan.',
+
+        // Surat Undangan Internal (Hal 22)
+        uiYth: 'Para Wakil Kepala Madrasah dan Guru\ndi Tempat',
+        uiAcara: 'Rapat Koordinasi Penataan Naskah Dinas Elektronik PMA 12/2026',
+        uiHariTgl: 'Rabu, 18 November 2026',
+        uiWaktu: '09.00 WIB s.d. selesai',
+        uiTempat: 'Ruang Rapat Guru MTsN 1 Landak',
+
+        // STTPP (Hal 57 & Kode STTPP Hal 53)
+        sttppPeserta: 'Ahmad Fauzi, S.Pd.',
+        sttppNip: '198501012010011001',
+        sttppPelatihan: 'Pelatihan Teknis Pengelolaan Tata Naskah Dinas Elektronik Angkatan I',
+        sttppPenyelenggara: 'Balai Pendidikan dan Pelatihan Keagamaan',
+        sttppPredikat: 'SANGAT BAIK',
+
+        // Sertifikat (Hal 58 & Kode Sert Hal 53)
+        sertPenerima: 'Siti Rahmah, S.Kom.',
+        sertKegiatan: 'Workshop Implementasi Digitalisasi Tata Naskah Dinas dan Kearsipan',
+        sertSebagai: 'Narasumber Teknis'
+      },
+
+      mandat: {
+        status: 'DEFINITIF', // DEFINITIF, AN, UB, PLT, PLH
+        pemberiMandat: 'Menteri Agama',
+        pelimpahKuasa: 'Sekretaris Jenderal'
+      },
+
+      registerData: []
+    };
+
+    function handleSignerStatusChange(status) {
+      appState.mandat.status = status;
+      const box = document.getElementById('mandatFields');
+      const rowPelimpah = document.getElementById('rowJabatanPelimpah');
+
+      if (status === 'AN') {
+        box.classList.remove('hidden');
+        rowPelimpah.classList.add('hidden');
+      } else if (status === 'UB') {
+        box.classList.remove('hidden');
+        rowPelimpah.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+      }
+      refreshPreview();
+    }
+    // ================= LOGIKA PENOMORAN BAKU SESUAI HALAMAN 52-58 =================
+    function getNomorLengkapSurat() {
+      const bulanNum = getMonthNumberTwoDigits(appState.selectedDate.getMonth());
+      const tahunNum = appState.selectedDate.getFullYear();
+      const n = appState.nextNumber;
+      const type = appState.docType;
+      const satker = appState.kodeSatker;
+      const klas = appState.kodeKlasifikasi;
+
+      // Halaman 54-55 (Korespondensi Eksternal): B/123/SJ/HM.01/06/2026 atau atas nama: B/23/SJ/B.IV/OT.01/02/2026
+      if (type === 'SURAT_DINAS' || type === 'UNDANGAN_INTERNAL') {
+        const pref = appState.fields.sifat === 'Rahasia' ? 'R' : 'B';
+        if (appState.mandat.status === 'AN' || appState.mandat.status === 'UB') {
+          return `${pref}/${n}/${satker}/B.IV/${klas}/${bulanNum}/${tahunNum}`;
+        }
+        return `${pref}/${n}/${satker}/${klas}/${bulanNum}/${tahunNum}`;
+      } 
+      // Halaman 54 (Korespondensi Internal Nota Dinas): 17/B.IV/OT.01/03/2026
+      else if (type === 'NOTA_DINAS') {
+        return `${n}/${satker}/${klas}/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 54 (Penugasan Surat Tugas): 19/SJ/OT.01/02/2026
+      else if (type === 'SURAT_TUGAS') {
+        return `${n}/${satker}/${klas}/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 55 Point f (Berita Acara - Kode: BA): 17/B.IV/KP.01/BA/04/2026
+      else if (type === 'BERITA_ACARA') {
+        return `${n}/${satker}/${klas}/BA/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 56 Point g (Surat Keterangan - Kode: SKet): 02/B.IV/KP.01/SKet/01/2026
+      else if (type === 'SURAT_KETERANGAN' || type === 'SKET_PERISTIWA') {
+        return `${n}/${satker}/${klas}/SKet/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 56 Point h (Surat Kuasa - Kode: SKu): 17/B.IV/KP.01/SKu/04/2026
+      else if (type === 'SURAT_KUASA') {
+        return `${n}/${satker}/${klas}/SKu/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 56 Point i (Surat Pengantar - Kode: SPen): 17/B.IV/KP.01/SPen/04/2026
+      else if (type === 'SURAT_PENGANTAR') {
+        return `${n}/${satker}/${klas}/SPen/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 57 Point j (Pengumuman - Kode: Peng): 17/B.IV/KP.01/Peng/04/2026
+      else if (type === 'PENGUMUMAN') {
+        return `${n}/${satker}/${klas}/Peng/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 57 Point k (STTPP - Kode: STTPP): 333/BP2K/KP.01/STTPP/11/2026
+      else if (type === 'STTPP') {
+        return `${n}/${satker}/${klas}/STTPP/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 58 Point l (Sertifikat - Kode: Sert): 233/B.IV/KP.01/Sert/08/2026
+      else if (type === 'SERTIFIKAT') {
+        return `${n}/${satker}/${klas}/Sert/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 53 Tabel Naskah Lainnya (Rekomendasi - Kode: Rek)
+      else if (type === 'REKOMENDASI') {
+        return `${n}/${satker}/${klas}/Rek/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 53 Tabel Naskah Lainnya (SPTJM - Kode: SPTJM)
+      else if (type === 'SPTJM') {
+        return `${n}/${satker}/${klas}/SPTJM/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 53 Tabel Naskah Lainnya (Surat Pernyataan - Kode: SPer)
+      else if (type === 'SURAT_PERNYATAAN') {
+        return `${n}/${satker}/${klas}/SPer/${bulanNum}/${tahunNum}`;
+      }
+      // Halaman 65 Surat Keputusan: Nomor [No] Tahun [Tahun]
+      else if (type === 'SK') {
+        return `NOMOR ${n} TAHUN ${tahunNum}`;
+      }
+      // Naskah lainnya (Telaahan Staf, Laporan): Tanpa nomor khusus atau nomor urut
+      else if (type === 'TELAAHAN_STAF' || type === 'LAPORAN') {
+        return `${n}/${satker}/${klas}/${bulanNum}/${tahunNum}`;
+      }
+      return `${n}/${satker}/${klas}/${bulanNum}/${tahunNum}`;
+    }
+
+    function getRumusBakuTeks() {
+      const type = appState.docType;
+      if (type === 'SURAT_DINAS' || type === 'UNDANGAN_INTERNAL') {
+        return '[Kategori Keamanan]/[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/[Bulan]/[Tahun]';
+      } else if (type === 'NOTA_DINAS' || type === 'SURAT_TUGAS') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/[Bulan]/[Tahun]';
+      } else if (type === 'BERITA_ACARA') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/BA/[Bulan]/[Tahun]';
+      } else if (type === 'SURAT_KETERANGAN' || type === 'SKET_PERISTIWA') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/SKet/[Bulan]/[Tahun]';
+      } else if (type === 'SURAT_KUASA') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/SKu/[Bulan]/[Tahun]';
+      } else if (type === 'SURAT_PENGANTAR') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/SPen/[Bulan]/[Tahun]';
+      } else if (type === 'PENGUMUMAN') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/Peng/[Bulan]/[Tahun]';
+      } else if (type === 'STTPP') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/STTPP/[Bulan]/[Tahun]';
+      } else if (type === 'SERTIFIKAT') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/Sert/[Bulan]/[Tahun]';
+      } else if (type === 'REKOMENDASI') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/Rek/[Bulan]/[Tahun]';
+      } else if (type === 'SPTJM') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/SPTJM/[Bulan]/[Tahun]';
+      } else if (type === 'SURAT_PERNYATAAN') {
+        return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/SPer/[Bulan]/[Tahun]';
+      } else if (type === 'SK') {
+        return 'NOMOR [Nomor Urut] TAHUN [Tahun]';
+      }
+      return '[Nomor Urut]/[Kode Jabatan]/[Kode Klasifikasi]/[Bulan]/[Tahun]';
+    }
+
+    function setActiveTab(stepId) {
+      const steps = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
+      steps.forEach(s => {
+        const btn = document.getElementById('nav-' + s);
+        const content = document.getElementById('content-' + s);
+        if (s === stepId) {
+          btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition bg-mandiri-light text-white shadow-sm";
+          content.classList.remove('hidden');
+        } else {
+          btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-slate-200 hover:bg-mandiri-blue";
+          content.classList.add('hidden');
+        }
+      });
+
+      const titles = {
+        step1: { title: "Tahap 1: Pilih Jenis Naskah", sub: "Format Baku Lampiran PMA No. 12 Tahun 2026", num: "1/4" },
+        step2: { title: "Tahap 2: Atur Nomor Urut", sub: "Penomoran Angka Arab Baku Hal 52-57", num: "2/4" },
+        step3: { title: "Tahap 3: Tulis Isi Naskah", sub: "Formulir Menyesuaikan Format Lampiran", num: "3/4" },
+        step4: { title: "Tahap 4: Penandatangan", sub: "Nama Pejabat (Huruf Kapital Tanpa Gelar), NIP & Tanggal", num: "4/4" },
+        step5: { title: "Buku Register Keluar", sub: "Pencatatan Nomor Arsip & Ekspor Spreadsheet", num: "Arsip" },
+        step6: { title: "Kop & Upload Logo", sub: "Pengaturan Kop Sesuai Hal 48-50 PMA 12", num: "Setting" }
+      };
+      document.getElementById('tabTitle').innerText = titles[stepId].title;
+      document.getElementById('tabSubtitle').innerText = titles[stepId].sub;
+      document.getElementById('stepIndicator').innerText = titles[stepId].num;
+    }
+
+    function nextStep(stepNumber) {
+      setActiveTab('step' + stepNumber);
+    }
+
+    function selectDocType(type) {
+      appState.docType = type;
+      
+      document.querySelectorAll('.doc-card').forEach(card => {
+        card.classList.remove('border-2', 'border-mandiri-blue', 'bg-mandiri-sky/40');
+        card.classList.add('border-slate-200');
+      });
+      const selected = document.getElementById('card-' + type);
+      if (selected) {
+        selected.classList.remove('border-slate-200');
+        selected.classList.add('border-2', 'border-mandiri-blue', 'bg-mandiri-sky/40');
+      }
+
+      renderFormFields();
+      refreshPreview();
+    }
+
+    function renderFormFields() {
+      const t = appState.docType;
+      const container = document.getElementById('formFieldsContainer');
+      let html = '';
+
+      if (t === 'SURAT_DINAS') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Sifat Surat:</label>
+            <select onchange="appState.fields.sifat=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+              <option value="Biasa" ${appState.fields.sifat === 'Biasa' ? 'selected' : ''}>Biasa</option>
+              <option value="Segera" ${appState.fields.sifat === 'Segera' ? 'selected' : ''}>Segera</option>
+              <option value="Sangat Segera" ${appState.fields.sifat === 'Sangat Segera' ? 'selected' : ''}>Sangat Segera</option>
+              <option value="Rahasia" ${appState.fields.sifat === 'Rahasia' ? 'selected' : ''}>Rahasia (Kode R)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Lampiran:</label>
+            <input type="text" value="${appState.fields.lampiran}" oninput="appState.fields.lampiran=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Hal / Perihal:</label>
+            <input type="text" value="${appState.fields.hal}" oninput="appState.fields.hal=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tujuan Surat (Yth. dan di):</label>
+            <textarea rows="3" oninput="appState.fields.tujuan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.tujuan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alinea Pembuka:</label>
+            <textarea rows="2" oninput="appState.fields.isiDinasBuka=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.isiDinasBuka}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alinea Isi:</label>
+            <textarea rows="3" oninput="appState.fields.isiDinasIsi=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.isiDinasIsi}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alinea Penutup:</label>
+            <textarea rows="2" oninput="appState.fields.isiDinasTutup=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.isiDinasTutup}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tembusan (Opsional):</label>
+            <textarea rows="2" oninput="appState.fields.tembusan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tembusan}</textarea>
+          </div>
+        `;
+      } else if (t === 'SURAT_KETERANGAN') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Keterangan:</label>
+            <input type="text" value="${appState.fields.sketJudul}" oninput="appState.fields.sketJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div class="bg-slate-50 p-2.5 rounded border text-xs space-y-1.5">
+            <span class="font-bold text-mandiri-blue">Pegawai yang Diterangkan:</span>
+            <input type="text" value="${appState.fields.sketNama}" oninput="appState.fields.sketNama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama Lengkap">
+            <input type="text" value="${appState.fields.sketNip}" oninput="appState.fields.sketNip=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="NIP">
+            <input type="text" value="${appState.fields.sketPangkat}" oninput="appState.fields.sketPangkat=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Pangkat/Golongan">
+            <input type="text" value="${appState.fields.sketJabatan}" oninput="appState.fields.sketJabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Jabatan">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Uraian Keterangan:</label>
+            <textarea rows="4" oninput="appState.fields.sketIsi=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.sketIsi}</textarea>
+          </div>
+        `;
+      } else if (t === 'NOTA_DINAS') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Yth. :</label>
+            <input type="text" value="${appState.fields.ndYth}" oninput="appState.fields.ndYth=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Dari :</label>
+            <input type="text" value="${appState.fields.ndDari}" oninput="appState.fields.ndDari=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Hal :</label>
+            <input type="text" value="${appState.fields.ndHal}" oninput="appState.fields.ndHal=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alinea Pembuka:</label>
+            <textarea rows="2" oninput="appState.fields.ndBuka=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.ndBuka}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alinea Isi:</label>
+            <textarea rows="3" oninput="appState.fields.ndIsi=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.ndIsi}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alinea Penutup:</label>
+            <textarea rows="2" oninput="appState.fields.ndTutup=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.ndTutup}</textarea>
+          </div>
+        `;
+      } else if (t === 'SKET_PERISTIWA') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Keterangan:</label>
+            <input type="text" value="${appState.fields.sketPeristiwaJudul}" oninput="appState.fields.sketPeristiwaJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Hari:</label>
+              <input type="text" value="${appState.fields.sketPeristiwaHari}" oninput="appState.fields.sketPeristiwaHari=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Tanggal:</label>
+              <input type="text" value="${appState.fields.sketPeristiwaTgl}" oninput="appState.fields.sketPeristiwaTgl=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Jam:</label>
+              <input type="text" value="${appState.fields.sketPeristiwaJam}" oninput="appState.fields.sketPeristiwaJam=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Uraian Kejadian / Peristiwa yang Terjadi:</label>
+            <textarea rows="4" oninput="appState.fields.sketPeristiwaUraian=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.sketPeristiwaUraian}</textarea>
+          </div>
+        `;
+      } else if (t === 'SURAT_PERNYATAAN') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Uraian Isi Pernyataan:</label>
+            <textarea rows="6" oninput="appState.fields.sperPernyataan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.sperPernyataan}</textarea>
+          </div>
+          <p class="text-[11px] text-slate-500 italic">Sesuai ketentuan PMA 12/2026 Halaman 45, Surat Pernyataan TIDAK dibubuhi cap dinas.</p>
+        `;
+      } else if (t === 'SPTJM') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Judul SPTJM:</label>
+            <input type="text" value="${appState.fields.sptjmJudul}" oninput="appState.fields.sptjmJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Pernyataan Pertanggungjawaban Mutlak:</label>
+            <textarea rows="5" oninput="appState.fields.sptjmPernyataan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.sptjmPernyataan}</textarea>
+          </div>
+        `;
+      } else if (t === 'REKOMENDASI') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Rekomendasi:</label>
+            <input type="text" value="${appState.fields.rekJudul}" oninput="appState.fields.rekJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Dasar (1. ... 2. ...):</label>
+            <textarea rows="2" oninput="appState.fields.rekDasar=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.rekDasar}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Menimbang (a. bahwa...):</label>
+            <textarea rows="2" oninput="appState.fields.rekMenimbang=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.rekMenimbang}</textarea>
+          </div>
+          <div class="bg-slate-50 p-2.5 rounded border text-xs space-y-1.5">
+            <span class="font-bold text-mandiri-blue">Penerima Rekomendasi:</span>
+            <input type="text" value="${appState.fields.rekPenerimaNama}" oninput="appState.fields.rekPenerimaNama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama">
+            <input type="text" value="${appState.fields.rekPenerimaNip}" oninput="appState.fields.rekPenerimaNip=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="NIP">
+            <input type="text" value="${appState.fields.rekPenerimaPangkat}" oninput="appState.fields.rekPenerimaPangkat=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Pangkat/Golongan">
+            <input type="text" value="${appState.fields.rekPenerimaJabatan}" oninput="appState.fields.rekPenerimaJabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Jabatan">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Untuk (Tujuan Rekomendasi):</label>
+            <textarea rows="3" oninput="appState.fields.rekUntuk=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.rekUntuk}</textarea>
+          </div>
+        `;
+      } else if (t === 'TELAAHAN_STAF') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tentang (Judul Telaahan):</label>
+            <input type="text" value="${appState.fields.tsJudul}" oninput="appState.fields.tsJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">I. Persoalan:</label>
+            <textarea rows="2" oninput="appState.fields.tsPersoalan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tsPersoalan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">II. Pra anggapan:</label>
+            <textarea rows="2" oninput="appState.fields.tsPraAnggapan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tsPraAnggapan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">III. Fakta yang Mempengaruhi:</label>
+            <textarea rows="2" oninput="appState.fields.tsFakta=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tsFakta}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">IV. Analisis:</label>
+            <textarea rows="3" oninput="appState.fields.tsAnalisis=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tsAnalisis}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">V. Simpulan:</label>
+            <textarea rows="2" oninput="appState.fields.tsSimpulan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tsSimpulan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">VI. Saran:</label>
+            <textarea rows="2" oninput="appState.fields.tsSaran=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.tsSaran}</textarea>
+          </div>
+        `;
+      } else if (t === 'LAPORAN') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tentang (Judul Laporan):</label>
+            <input type="text" value="${appState.fields.lapJudul}" oninput="appState.fields.lapJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">A.1. Umum:</label>
+            <textarea rows="2" oninput="appState.fields.lapUmum=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.lapUmum}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">A.2. Maksud dan Tujuan:</label>
+            <textarea rows="2" oninput="appState.fields.lapTujuan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.lapTujuan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">B. Kegiatan Yang Dilaksanakan:</label>
+            <textarea rows="2" oninput="appState.fields.lapKegiatan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.lapKegiatan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">C. Hasil Yang Dicapai:</label>
+            <textarea rows="2" oninput="appState.fields.lapHasil=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.lapHasil}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">D. Simpulan dan Saran:</label>
+            <textarea rows="2" oninput="appState.fields.lapSimpulan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.lapSimpulan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">E. Penutup:</label>
+            <textarea rows="2" oninput="appState.fields.lapPenutup=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.lapPenutup}</textarea>
+          </div>
+        `;
+      } else if (t === 'PENGUMUMAN') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tentang (Judul Pengumuman):</label>
+            <input type="text" value="${appState.fields.pengJudul}" oninput="appState.fields.pengJudul=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Alasan Perlunya Pengumuman:</label>
+            <textarea rows="2" oninput="appState.fields.pengAlasan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.pengAlasan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Dasar Peraturan:</label>
+            <textarea rows="2" oninput="appState.fields.pengDasar=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.pengDasar}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Isi Pengumuman:</label>
+            <textarea rows="4" oninput="appState.fields.pengIsi=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.pengIsi}</textarea>
+          </div>
+        `;
+      } else if (t === 'SURAT_PENGANTAR') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tujuan Pengiriman (Yth.):</label>
+            <textarea rows="2" oninput="appState.fields.spTujuan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.spTujuan}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Naskah Dinas / Barang yang Dikirimkan:</label>
+            <textarea rows="2" oninput="appState.fields.spBarang=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.spBarang}</textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Banyaknya:</label>
+              <input type="text" value="${appState.fields.spBanyaknya}" oninput="appState.fields.spBanyaknya=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Keterangan:</label>
+              <input type="text" value="${appState.fields.spKeterangan}" oninput="appState.fields.spKeterangan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+            </div>
+          </div>
+          <div class="bg-slate-50 p-2.5 rounded border text-xs space-y-1.5 mt-2">
+            <span class="font-bold text-mandiri-blue">Data Penerima Barang:</span>
+            <input type="text" value="${appState.fields.spPenerimaJabatan}" oninput="appState.fields.spPenerimaJabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama Jabatan Penerima">
+            <input type="text" value="${appState.fields.spPenerimaNama}" oninput="appState.fields.spPenerimaNama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama Lengkap Penerima">
+            <input type="text" value="${appState.fields.spPenerimaNip}" oninput="appState.fields.spPenerimaNip=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="NIP Penerima">
+            <input type="text" value="${appState.fields.spPenerimaTelp}" oninput="appState.fields.spPenerimaTelp=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nomor Telepon">
+          </div>
+        `;
+      } else if (t === 'SK') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tentang (Judul Keputusan):</label>
+            <textarea rows="2" oninput="appState.fields.skTentang=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs uppercase font-bold text-mandiri-blue">${appState.fields.skTentang}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Menimbang:</label>
+            <textarea rows="3" oninput="appState.fields.skMenimbang=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.skMenimbang}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mengingat:</label>
+            <textarea rows="3" oninput="appState.fields.skMengingat=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.skMengingat}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Diktum KESATU:</label>
+            <textarea rows="2" oninput="appState.fields.skDiktum1=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.skDiktum1}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Diktum KEDUA:</label>
+            <textarea rows="2" oninput="appState.fields.skDiktum2=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.skDiktum2}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Diktum KETIGA:</label>
+            <textarea rows="2" oninput="appState.fields.skDiktum3=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.skDiktum3}</textarea>
+          </div>
+        `;
+      } else if (t === 'SURAT_TUGAS') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Menimbang:</label>
+            <textarea rows="2" oninput="appState.fields.stMenimbang=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.stMenimbang}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Dasar:</label>
+            <textarea rows="2" oninput="appState.fields.stDasar=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.stDasar}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Memberikan Tugas Kepada:</label>
+            <textarea rows="4" oninput="appState.fields.stPegawai=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-mono">${appState.fields.stPegawai}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Untuk Melaksanakan Tugas:</label>
+            <textarea rows="3" oninput="appState.fields.stUntuk=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.stUntuk}</textarea>
+          </div>
+        `;
+      } else if (t === 'BERITA_ACARA') {
+        html = `
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Hari:</label>
+              <input type="text" value="${appState.fields.baHari}" oninput="appState.fields.baHari=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Tanggal (Teks):</label>
+              <input type="text" value="${appState.fields.baTanggalTeks}" oninput="appState.fields.baTanggalTeks=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Bulan (Teks):</label>
+              <input type="text" value="${appState.fields.baBulanTeks}" oninput="appState.fields.baBulanTeks=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700">Tahun (Teks):</label>
+              <input type="text" value="${appState.fields.baTahunTeks}" oninput="appState.fields.baTahunTeks=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs">
+            </div>
+          </div>
+          <div class="bg-slate-50 p-2 rounded border text-xs space-y-1">
+            <span class="font-bold text-mandiri-blue">Pihak Pertama:</span>
+            <input type="text" value="${appState.fields.baPihak1Nama}" oninput="appState.fields.baPihak1Nama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama">
+            <input type="text" value="${appState.fields.baPihak1NipJabatan}" oninput="appState.fields.baPihak1NipJabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="NIP dan Jabatan">
+          </div>
+          <div class="bg-slate-50 p-2 rounded border text-xs space-y-1">
+            <span class="font-bold text-mandiri-blue">Pihak Kedua:</span>
+            <input type="text" value="${appState.fields.baPihak2Nama}" oninput="appState.fields.baPihak2Nama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama / Pihak Lain">
+            <input type="text" value="${appState.fields.baPihak2Jabatan}" oninput="appState.fields.baPihak2Jabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Jabatan / Lembaga">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Uraian Pelaksanaan Kegiatan:</label>
+            <textarea rows="3" oninput="appState.fields.baUraian=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.baUraian}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Dasar Berita Acara:</label>
+            <input type="text" value="${appState.fields.baDasar}" oninput="appState.fields.baDasar=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+        `;
+      } else if (t === 'SURAT_KUASA') {
+        html = `
+          <div class="bg-slate-50 p-2 rounded border text-xs space-y-1">
+            <span class="font-bold text-mandiri-blue">Pemberi Kuasa:</span>
+            <input type="text" value="${appState.fields.skPemberiNama}" oninput="appState.fields.skPemberiNama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama">
+            <input type="text" value="${appState.fields.skPemberiJabatan}" oninput="appState.fields.skPemberiJabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Jabatan">
+            <input type="text" value="${appState.fields.skPemberiAlamat}" oninput="appState.fields.skPemberiAlamat=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Alamat">
+            <input type="text" value="${appState.fields.skPemberiNip}" oninput="appState.fields.skPemberiNip=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="NIP">
+          </div>
+          <div class="bg-slate-50 p-2 rounded border text-xs space-y-1">
+            <span class="font-bold text-mandiri-blue">Penerima Kuasa:</span>
+            <input type="text" value="${appState.fields.skPenerimaNama}" oninput="appState.fields.skPenerimaNama=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Nama">
+            <input type="text" value="${appState.fields.skPenerimaJabatan}" oninput="appState.fields.skPenerimaJabatan=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Jabatan">
+            <input type="text" value="${appState.fields.skPenerimaAlamat}" oninput="appState.fields.skPenerimaAlamat=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="Alamat">
+            <input type="text" value="${appState.fields.skPenerimaNip}" oninput="appState.fields.skPenerimaNip=this.value; refreshPreview()" class="w-full border rounded p-1 text-xs" placeholder="NIP">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Materi Kuasa (Untuk):</label>
+            <textarea rows="3" oninput="appState.fields.skUntuk=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs leading-relaxed">${appState.fields.skUntuk}</textarea>
+          </div>
+        `;
+      } else if (t === 'UNDANGAN_INTERNAL') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tujuan Undangan (Yth.):</label>
+            <textarea rows="2" oninput="appState.fields.uiYth=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.uiYth}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Acara Pertemuan:</label>
+            <input type="text" value="${appState.fields.uiAcara}" oninput="appState.fields.uiAcara=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Hari, Tanggal:</label>
+            <input type="text" value="${appState.fields.uiHariTgl}" oninput="appState.fields.uiHariTgl=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Waktu:</label>
+            <input type="text" value="${appState.fields.uiWaktu}" oninput="appState.fields.uiWaktu=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tempat Acara:</label>
+            <input type="text" value="${appState.fields.uiTempat}" oninput="appState.fields.uiTempat=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+        `;
+      } else if (t === 'STTPP') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Peserta Lulus:</label>
+            <input type="text" value="${appState.fields.sttppPeserta}" oninput="appState.fields.sttppPeserta=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">NIP Peserta:</label>
+            <input type="text" value="${appState.fields.sttppNip}" oninput="appState.fields.sttppNip=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Pelatihan / Diklat:</label>
+            <input type="text" value="${appState.fields.sttppPelatihan}" oninput="appState.fields.sttppPelatihan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Penyelenggara Pelatihan:</label>
+            <input type="text" value="${appState.fields.sttppPenyelenggara}" oninput="appState.fields.sttppPenyelenggara=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Predikat Kelulusan:</label>
+            <input type="text" value="${appState.fields.sttppPredikat}" oninput="appState.fields.sttppPredikat=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold uppercase">
+          </div>
+        `;
+      } else if (t === 'SERTIFIKAT') {
+        html = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Penerima Sertifikat:</label>
+            <input type="text" value="${appState.fields.sertPenerima}" oninput="appState.fields.sertPenerima=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Sebagai (Peran/Status):</label>
+            <input type="text" value="${appState.fields.sertSebagai}" oninput="appState.fields.sertSebagai=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Kegiatan:</label>
+            <textarea rows="2" oninput="appState.fields.sertKegiatan=this.value; refreshPreview()" class="w-full border rounded p-1.5 text-xs">${appState.fields.sertKegiatan}</textarea>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Helper penamaan bulan dan format angka 2-digit sesuai penomoran Arab PMA 12
+    function getMonthNumberTwoDigits(monthIndex) {
+      return String(monthIndex + 1).padStart(2, '0');
+    }
+
+    function getIndonesianMonth(monthIndex) {
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      return months[monthIndex] || 'Januari';
+    }
+
+    // Preset Kop Standar Kemenag Sesuai Hal 48-50 PMA 12/2026
+    function applyPresetKop(preset) {
+      if (preset === 'MADRASAH') {
+        appState.kop.baris1 = 'KEMENTERIAN AGAMA REPUBLIK INDONESIA';
+        appState.kop.baris2 = 'KANTOR KEMENTERIAN AGAMA KABUPATEN LANDAK';
+        appState.kop.baris3 = 'MADRASAH TSANAWIYAH NEGERI 1 LANDAK';
+        appState.kop.baris4 = 'Jalan Pangeran Cinata Nomor 12 Ngabang, Kabupaten Landak, Kalimantan Barat 79357\nTelepon: (0563) 21102; Faksimile: (0563) 21103; Website: www.kemenag.go.id';
+        appState.kodeSatker = 'Mts.14.08';
+        appState.kodeKlasifikasi = 'PP.01';
+      } else if (preset === 'KUA') {
+        appState.kop.baris1 = 'KEMENTERIAN AGAMA REPUBLIK INDONESIA';
+        appState.kop.baris2 = 'KANTOR KEMENTERIAN AGAMA KOTA JAKARTA SELATAN';
+        appState.kop.baris3 = 'KANTOR URUSAN AGAMA PASAR MINGGU';
+        appState.kop.baris4 = 'Jalan Kebagusan Raya Nomor 52 Ragunan Pasar Minggu, Jakarta Selatan\nTelepon (021) 7822819 Website: www.kemenag.go.id';
+        appState.kodeSatker = 'KUA.01';
+        appState.kodeKlasifikasi = 'BA.01';
+      } else if (preset === 'KANKEMENAG') {
+        appState.kop.baris1 = 'KEMENTERIAN AGAMA REPUBLIK INDONESIA';
+        appState.kop.baris2 = 'KANTOR KEMENTERIAN AGAMA KOTA JAKARTA UTARA';
+        appState.kop.baris3 = '';
+        appState.kop.baris4 = 'Jalan D.I. Panjaitan No. 10 Jakarta Timur 13340\nTelepon: (021) 8197479 Website: www.kemenag.go.id';
+        appState.kodeSatker = 'Kankemenag.JU';
+        appState.kodeKlasifikasi = 'HM.01';
+      } else if (preset === 'KANWIL') {
+        appState.kop.baris1 = 'KEMENTERIAN AGAMA REPUBLIK INDONESIA';
+        appState.kop.baris2 = 'KANTOR WILAYAH KEMENTERIAN AGAMA PROVINSI DKI JAKARTA';
+        appState.kop.baris3 = '';
+        appState.kop.baris4 = 'Jalan D.I. Panjaitan No. 10 Jakarta Timur 13340\nTelepon: (021) 8197479 Website: www.kemenag.go.id';
+        appState.kodeSatker = 'KW.DKI';
+        appState.kodeKlasifikasi = 'OT.01';
+      } else if (preset === 'PUSAT') {
+        appState.kop.baris1 = 'KEMENTERIAN AGAMA REPUBLIK INDONESIA';
+        appState.kop.baris2 = 'SEKRETARIAT JENDERAL';
+        appState.kop.baris3 = '';
+        appState.kop.baris4 = 'Jalan Lapangan Banteng Barat Nomor 3 – 4 Jakarta 10710\nTelepon: (021) 3519295, (021) 31924573; Website: www.kemenag.go.id';
+        appState.kodeSatker = 'SJ';
+        appState.kodeKlasifikasi = 'OT.01';
+      }
+
+      document.getElementById('kopBaris1').value = appState.kop.baris1;
+      document.getElementById('kopBaris2').value = appState.kop.baris2;
+      document.getElementById('kopBaris3').value = appState.kop.baris3;
+      document.getElementById('kopBaris4').value = appState.kop.baris4;
+      document.getElementById('inputKodeSatker').value = appState.kodeSatker;
+      document.getElementById('inputKodeKlasifikasi').value = appState.kodeKlasifikasi;
+      refreshPreview();
+    }
+
+    // Function helper untuk membuat blok tanda tangan sesuai mandat PMA 12 Hal 75-76
+    function renderBlokTandaTangan(showCap = true, includeKotaTanggal = false) {
+      const m = appState.mandat.status;
+      const pem = document.getElementById('signerPemberiMandat')?.value || 'Menteri Agama';
+      const pel = document.getElementById('signerPelimpahKuasa')?.value || 'Sekretaris Jenderal';
+      const jab = appState.signer.jabatan;
+      const nama = appState.signer.nama;
+      const nip = appState.signer.nip;
+
+      let htmlJabatan = '';
+      if (m === 'AN') {
+        htmlJabatan = `
+          <p>a.n. ${pem}</p>
+          <p>${jab},</p>
+        `;
+      } else if (m === 'UB') {
+        htmlJabatan = `
+          <p>a.n. ${pem}</p>
+          <p class="pl-4">${pel}</p>
+          <p class="pl-8">u.b.</p>
+          <p class="pl-8">${jab},</p>
+        `;
+      } else if (m === 'PLT') {
+        htmlJabatan = `<p>Plt. ${jab},</p>`;
+      } else if (m === 'PLH') {
+        htmlJabatan = `<p>Plh. ${jab},</p>`;
+      } else {
+        htmlJabatan = `<p>${jab},</p>`;
+      }
+
+      return `
+        <div class="text-left w-72 text-[12pt] leading-normal">
+          ${includeKotaTanggal ? `<p class="mb-1">${appState.signer.kota}, ${appState.signer.tanggalString}</p>` : ''}
+          ${htmlJabatan}
+          <p class="text-[10pt] text-slate-400 italic my-1">${showCap ? '[tanda tangan dan cap dinas]' : '(tanda tangan)'}</p>
+          <div class="h-16"></div>
+          <p class="font-bold uppercase tracking-wide">${nama}</p>
+          <p>NIP ${nip}</p>
+        </div>
+      `;
+    }
+
+    function calculateNextNumber() {
+      const val = parseInt(document.getElementById('inputLastNumber').value) || 0;
+      appState.lastNumber = val;
+      appState.nextNumber = val + 1;
+      document.getElementById('previewNextNumber').innerText = appState.nextNumber;
+      refreshPreview();
+    }
+
+    function setNumberPlusOne() {
+      document.getElementById('inputLastNumber').value = appState.nextNumber;
+      calculateNextNumber();
+    }
+
+    function handleLogoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        appState.kop.logoDataUrl = e.target.result;
+        document.getElementById('logoPreview').src = e.target.result;
+        localStorage.setItem('kemenag_logo_custom', e.target.result);
+        refreshPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleDateChange() {
+      const raw = document.getElementById('signerTanggal').value;
+      if (!raw) return;
+      const d = new Date(raw);
+      appState.selectedDate = d;
+      appState.signer.tanggalString = `${d.getDate()} ${getIndonesianMonth(d.getMonth())} ${d.getFullYear()}`;
+      
+      const mm = getMonthNumberTwoDigits(d.getMonth());
+      document.getElementById('previewMonthYear').innerText = `${mm}/${d.getFullYear()}`;
+      refreshPreview();
+    }
+
+    // Refresh Visualisasi Lembar Dokumen Persis Sesuai Lampiran PMA 12/2026
+    function refreshPreview() {
+      const paper = document.getElementById('paperContainer');
+      const content = document.getElementById('documentContent');
+      const type = appState.docType;
+
+      appState.kodeKlasifikasi = document.getElementById('inputKodeKlasifikasi').value || 'PP.01';
+      appState.kodeSatker = document.getElementById('inputKodeSatker').value || 'Mts.14.08';
+      appState.signer.nama = document.getElementById('signerNama').value || 'NAMA PEJABAT';
+      appState.signer.nip = document.getElementById('signerNIP').value || '-';
+      appState.signer.jabatan = document.getElementById('signerJabatan').value || 'Kepala';
+      appState.signer.kota = document.getElementById('signerKota').value || 'Tempat';
+
+      appState.kop.baris1 = document.getElementById('kopBaris1').value;
+      appState.kop.baris2 = document.getElementById('kopBaris2').value;
+      appState.kop.baris3 = document.getElementById('kopBaris3').value;
+      appState.kop.baris4 = document.getElementById('kopBaris4').value;
+
+      const bulanNum = getMonthNumberTwoDigits(appState.selectedDate.getMonth());
+      const tahunNum = appState.selectedDate.getFullYear();
+      const n = appState.nextNumber;
+
+      const nomorResmi = getNomorLengkapSurat();
+      document.getElementById('displayRumusBaku').innerText = getRumusBakuTeks();
+      document.getElementById('displayNomorNaskahAktif').innerText = nomorResmi;
+
+      // Standar Kertas & Huruf PMA 12/2026 Bab III:
+      // SK: Wajib F4 (Folio 215x330mm), Huruf Bookman Old Style 12pt
+      // Naskah Lain: Kertas A4 (210x297mm), Huruf Arial 12pt
+      if (type === 'SK') {
+        paper.className = "paper-preview sheet-f4 bg-white shadow-2xl relative font-bookman text-[12pt] leading-normal page-f4";
+      } else {
+        paper.className = "paper-preview sheet-a4 bg-white shadow-2xl relative font-arial text-[12pt] leading-normal page-a4";
+      }
+
+      // KOP SURAT STANDAR KEMENAG SESUAI HALAMAN 48-50
+      // Logo Sejajar Kiri, Teks Simetris Tengah
+      const kopHTML = `
+        <div class="flex items-center gap-4 pb-1">
+          <div class="w-[72px] h-[72px] flex-shrink-0 flex items-center justify-center">
+            <img src="${appState.kop.logoDataUrl}" alt="Logo" class="max-h-full max-w-full object-contain">
+          </div>
+          <div class="flex-1 text-center font-arial">
+            <p class="font-bold text-[14pt] uppercase tracking-wide text-black leading-tight">${appState.kop.baris1}</p>
+            ${appState.kop.baris2.trim() ? `<p class="font-bold text-[12pt] uppercase tracking-wide text-black leading-tight">${appState.kop.baris2}</p>` : ''}
+            ${appState.kop.baris3.trim() ? `<p class="font-bold text-[11pt] uppercase tracking-wide text-black leading-tight">${appState.kop.baris3}</p>` : ''}
+            <p class="text-[9pt] font-normal leading-tight text-slate-800 mt-1 whitespace-pre-line">${appState.kop.baris4}</p>
+          </div>
+        </div>
+        <div class="kop-kemenag-line"></div>
+      `;
+
+      let docBody = '';
+
+      // 1. SURAT DINAS (Lampiran Hal. 25 & Penomoran Hal. 55)
+      if (type === 'SURAT_DINAS') {
+        docBody = `
+          ${kopHTML}
+          <div class="flex justify-between items-start mt-2">
+            <table class="w-[58%] text-[12pt]">
+              <tr><td class="w-24 align-top py-0.5">Nomor</td><td class="w-3 align-top py-0.5">:</td><td class="align-top py-0.5 font-bold">${nomorResmi}</td></tr>
+              <tr><td class="align-top py-0.5">Sifat</td><td class="align-top py-0.5">:</td><td class="align-top py-0.5">${appState.fields.sifat}</td></tr>
+              <tr><td class="align-top py-0.5">Lampiran</td><td class="align-top py-0.5">:</td><td class="align-top py-0.5">${appState.fields.lampiran}</td></tr>
+              <tr><td class="align-top py-0.5 font-bold">Hal</td><td class="align-top py-0.5 font-bold">:</td><td class="align-top py-0.5 font-bold">${appState.fields.hal}</td></tr>
+            </table>
+            <div class="text-right text-[12pt]">
+              ${appState.signer.kota}, ${appState.signer.tanggalString}
+            </div>
+          </div>
+
+          <div class="mt-6 text-[12pt]">
+            <p>Yth.</p>
+            <p class="whitespace-pre-line pl-6">${appState.fields.tujuan}</p>
+          </div>
+
+          <div class="mt-6 text-justify text-[12pt] leading-relaxed">
+            <p class="indent-8">Dengan hormat, ${appState.fields.isiDinasBuka}</p>
+            <p class="indent-8 mt-3">${appState.fields.isiDinasIsi}</p>
+            <p class="indent-8 mt-3">${appState.fields.isiDinasTutup}</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            ${renderBlokTandaTangan(true, false)}
+          </div>
+
+          ${appState.fields.tembusan.trim() ? `
+          <div class="mt-8 text-[10pt]">
+            <p class="font-semibold">Tembusan:</p>
+            <div class="whitespace-pre-line pl-3">${appState.fields.tembusan}</div>
+          </div>` : ''}
+        `;
+      }
+
+      // 2. SURAT KETERANGAN SESEORANG (Hal. 31 & Hal. 56)
+      else if (type === 'SURAT_KETERANGAN') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT KETERANGAN</p>
+            <p class="text-[11pt] uppercase tracking-wider">${appState.fields.sketJudul}</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-4">
+            <p>Yang bertanda tangan di bawah ini,</p>
+            
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <p class="pt-2">dengan ini menerangkan bahwa</p>
+
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.fields.sketNama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.fields.sketNip}</td></tr>
+              <tr><td class="py-0.5">Pangkat/golongan</td><td>:</td><td>${appState.fields.sketPangkat}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.fields.sketJabatan}</td></tr>
+            </table>
+
+            <div class="whitespace-pre-line ml-4 pt-1">${appState.fields.sketIsi}</div>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-72 text-left text-[12pt]">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>Pejabat Pembuat Keterangan</p>
+              <p>${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. SURAT KETERANGAN TENTANG HAL/PERISTIWA (Hal. 32 & Hal. 56)
+      else if (type === 'SKET_PERISTIWA') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT KETERANGAN</p>
+            <p class="text-[11pt] uppercase tracking-wider">${appState.fields.sketPeristiwaJudul}</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-4">
+            <p>Yang bertanda tangan di bawah ini,</p>
+            
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <p class="pt-2">Dengan ini menerangkan bahwa pada hari ini <b>${appState.fields.sketPeristiwaHari}</b> tanggal <b>${appState.fields.sketPeristiwaTgl}</b> jam <b>${appState.fields.sketPeristiwaJam}</b> telah terjadi hal/peristiwa:</p>
+
+            <div class="whitespace-pre-line ml-4 pt-1">${appState.fields.sketPeristiwaUraian}</div>
+
+            <p class="pt-3">Demikian surat keterangan ini dibuat untuk digunakan sebagaimana mestinya.</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-72 text-left text-[12pt]">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>Pejabat Pembuat Keterangan</p>
+              <p>${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 4. SURAT PERNYATAAN (Hal. 45 & Kode SPer Hal. 53) - Tanpa Cap Dinas
+      else if (type === 'SURAT_PERNYATAAN') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT PERNYATAAN</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-4">
+            <p>Yang bertanda tangan di bawah ini,</p>
+            
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <div class="whitespace-pre-line ml-4">${appState.fields.sperPernyataan}</div>
+
+            <p class="pt-2">Demikian Surat Pernyataan ini dibuat dengan sebenar-benarnya untuk dapat digunakan sebagaimana mestinya.</p>
+          </div>
+
+          <!-- Kaki Tanda Tangan Hal 45: Tanpa Cap Dinas Sesuai Ketentuan PMA 12 -->
+          <div class="mt-12 flex justify-end">
+            ${renderBlokTandaTangan(false, true)}
+          </div>
+        `;
+      }
+
+      // 5. SPTJM (Hal. 44 & Kode SPTJM Hal. 53)
+      else if (type === 'SPTJM') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT PERNYATAAN TANGGUNG JAWAB MUTLAK (SPTJM)</p>
+            <p class="text-[11pt] uppercase tracking-wider">${appState.fields.sptjmJudul}</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-4">
+            <p>Yang bertanda tangan di bawah ini,</p>
+            
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <div class="whitespace-pre-line ml-4">${appState.fields.sptjmPernyataan}</div>
+
+            <p class="pt-2">Demikian Surat Pernyataan Tanggung Jawab Mutlak ini dibuat dengan sesungguhnya.</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            ${renderBlokTandaTangan(true, true)}
+          </div>
+        `;
+      }
+
+      // 6. REKOMENDASI (Hal. 42 & Kode Rek Hal. 53)
+      else if (type === 'REKOMENDASI') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-5">
+            <p class="text-[13pt] uppercase tracking-wide">REKOMENDASI</p>
+            <p class="text-[11pt] uppercase tracking-wider">${appState.fields.rekJudul}</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="space-y-3 text-justify text-[12pt] leading-relaxed">
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Dasar</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">${appState.fields.rekDasar}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="font-bold pt-2">Menimbang</td>
+                <td class="pt-2">:</td>
+                <td class="pt-2 whitespace-pre-line">${appState.fields.rekMenimbang}</td>
+              </tr>
+            </table>
+
+            <p class="pt-2">Yang bertanda tangan di bawah ini:</p>
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <p class="pt-2">dengan ini memberikan rekomendasi kepada:</p>
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.fields.rekPenerimaNama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.fields.rekPenerimaNip}</td></tr>
+              <tr><td class="py-0.5">Pangkat/golongan</td><td>:</td><td>${appState.fields.rekPenerimaPangkat}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.fields.rekPenerimaJabatan}</td></tr>
+            </table>
+
+            <table class="w-full ml-4 text-[12pt] pt-2">
+              <tr class="align-top"><td class="w-20">Untuk</td><td class="w-4">:</td><td>${appState.fields.rekUntuk}</td></tr>
+            </table>
+
+            <p class="pt-3">Demikian rekomendasi ini dibuat untuk dipergunakan seperlunya.</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-72 text-left text-[12pt]">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>Pejabat Pembuat Rekomendasi</p>
+              ${renderBlokTandaTangan(true, false)}
+            </div>
+          </div>
+        `;
+      }
+
+      // 5. SPTJM (Hal. 44 & Kode SPTJM Hal. 53)
+      else if (type === 'SPTJM') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT PERNYATAAN TANGGUNG JAWAB MUTLAK (SPTJM)</p>
+            <p class="text-[11pt] uppercase tracking-wider">${appState.fields.sptjmJudul}</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-4">
+            <p>Yang bertanda tangan di bawah ini,</p>
+            
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <div class="whitespace-pre-line ml-4">${appState.fields.sptjmPernyataan}</div>
+
+            <p class="pt-2">Demikian Surat Pernyataan Tanggung Jawab Mutlak ini dibuat dengan sesungguhnya.</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-left text-[12pt]">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 6. REKOMENDASI (Hal. 42 & Kode Rek Hal. 53)
+      else if (type === 'REKOMENDASI') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-5">
+            <p class="text-[13pt] uppercase tracking-wide">REKOMENDASI</p>
+            <p class="text-[11pt] uppercase tracking-wider">${appState.fields.rekJudul}</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="space-y-3 text-justify text-[12pt] leading-relaxed">
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Dasar</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">${appState.fields.rekDasar}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="font-bold pt-2">Menimbang</td>
+                <td class="pt-2">:</td>
+                <td class="pt-2 whitespace-pre-line">${appState.fields.rekMenimbang}</td>
+              </tr>
+            </table>
+
+            <p class="pt-2">Yang bertanda tangan di bawah ini:</p>
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.signer.nama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.signer.nip}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.signer.jabatan}</td></tr>
+            </table>
+
+            <p class="pt-2">dengan ini memberikan rekomendasi kepada:</p>
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-36 py-0.5">Nama</td><td class="w-4">:</td><td class="font-bold uppercase">${appState.fields.rekPenerimaNama}</td></tr>
+              <tr><td class="py-0.5">NIP</td><td>:</td><td>${appState.fields.rekPenerimaNip}</td></tr>
+              <tr><td class="py-0.5">Pangkat/golongan</td><td>:</td><td>${appState.fields.rekPenerimaPangkat}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.fields.rekPenerimaJabatan}</td></tr>
+            </table>
+
+            <table class="w-full ml-4 text-[12pt] pt-2">
+              <tr class="align-top"><td class="w-20">Untuk</td><td class="w-4">:</td><td>${appState.fields.rekUntuk}</td></tr>
+            </table>
+
+            <p class="pt-3">Demikian rekomendasi ini dibuat untuk dipergunakan seperlunya.</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-72 text-left text-[12pt]">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>Pejabat Pembuat Rekomendasi</p>
+              <p>${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 7. TELAAHAN STAF (Hal. 39) - Tanpa Kop Naskah Dinas
+      else if (type === 'TELAAHAN_STAF') {
+        docBody = `
+          <div class="text-center font-bold mb-8 pt-4">
+            <p class="text-[14pt] uppercase tracking-wide">TELAAHAN STAF</p>
+            <p class="text-[12pt] uppercase tracking-wider">TENTANG</p>
+            <p class="text-[12pt] uppercase tracking-wider mt-1 border-b border-black inline-block pb-0.5">${appState.fields.tsJudul}</p>
+          </div>
+
+          <div class="space-y-4 text-justify text-[12pt] leading-relaxed">
+            <div>
+              <p class="font-bold">I. Persoalan</p>
+              <p class="pl-6 pt-1">${appState.fields.tsPersoalan}</p>
+            </div>
+            <div>
+              <p class="font-bold">II. Pra anggapan,</p>
+              <p class="pl-6 pt-1">${appState.fields.tsPraAnggapan}</p>
+            </div>
+            <div>
+              <p class="font-bold">III. Fakta yang Mempengaruhi</p>
+              <p class="pl-6 pt-1">${appState.fields.tsFakta}</p>
+            </div>
+            <div>
+              <p class="font-bold">IV. Analisis</p>
+              <p class="pl-6 pt-1">${appState.fields.tsAnalisis}</p>
+            </div>
+            <div>
+              <p class="font-bold">V. Simpulan</p>
+              <p class="pl-6 pt-1">${appState.fields.tsSimpulan}</p>
+            </div>
+            <div>
+              <p class="font-bold">VI. Saran</p>
+              <p class="pl-6 pt-1">${appState.fields.tsSaran}</p>
+            </div>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-left text-[12pt]">
+              <p>Dibuat di ${appState.signer.kota}</p>
+              <p>Tanggal ${appState.signer.tanggalString}</p>
+              <p class="mt-2">${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 8. LAPORAN (Hal. 37)
+      else if (type === 'LAPORAN') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[14pt] uppercase tracking-wide">LAPORAN</p>
+            <p class="text-[12pt] uppercase tracking-wider">TENTANG</p>
+            <p class="text-[12pt] uppercase tracking-wider mt-1 border-b border-black inline-block pb-0.5">${appState.fields.lapJudul}</p>
+          </div>
+
+          <div class="space-y-4 text-justify text-[12pt] leading-relaxed">
+            <div>
+              <p class="font-bold">A. Pendahuluan</p>
+              <div class="pl-6 space-y-1 pt-1">
+                <p><b>1. Umum:</b> ${appState.fields.lapUmum}</p>
+                <p><b>2. Maksud dan Tujuan:</b> ${appState.fields.lapTujuan}</p>
+                <p><b>3. Ruang Lingkup:</b> ${appState.fields.lapRuangLingkup}</p>
+                <p><b>4. Dasar:</b> ${appState.fields.lapDasar}</p>
+              </div>
+            </div>
+            <div>
+              <p class="font-bold">B. Kegiatan Yang Dilaksanakan</p>
+              <p class="pl-6 pt-1 whitespace-pre-line">${appState.fields.lapKegiatan}</p>
+            </div>
+            <div>
+              <p class="font-bold">C. Hasil Yang Dicapai</p>
+              <p class="pl-6 pt-1 whitespace-pre-line">${appState.fields.lapHasil}</p>
+            </div>
+            <div>
+              <p class="font-bold">D. Simpulan dan Saran</p>
+              <p class="pl-6 pt-1 whitespace-pre-line">${appState.fields.lapSimpulan}</p>
+            </div>
+            <div>
+              <p class="font-bold">E. Penutup</p>
+              <p class="pl-6 pt-1 whitespace-pre-line">${appState.fields.lapPenutup}</p>
+            </div>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-left text-[12pt]">
+              <p>Dibuat di ${appState.signer.kota}</p>
+              <p>Tanggal ${appState.signer.tanggalString}</p>
+              <p class="mt-2">${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 9. PENGUMUMAN (Hal. 35 & Kode Peng Hal. 52, 57)
+      else if (type === 'PENGUMUMAN') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[14pt] uppercase tracking-wide">PENGUMUMAN</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+            <p class="text-[12pt] uppercase tracking-wider mt-2">TENTANG</p>
+            <p class="text-[12pt] uppercase tracking-wider mt-1 border-b border-black inline-block pb-0.5">${appState.fields.pengJudul}</p>
+          </div>
+
+          <div class="space-y-4 text-justify text-[12pt] leading-relaxed">
+            <p class="indent-8">${appState.fields.pengAlasan}</p>
+            <p class="indent-8">Berdasarkan ${appState.fields.pengDasar}, bersama ini diumumkan hal-hal sebagai berikut:</p>
+            <div class="pl-6 whitespace-pre-line font-medium">${appState.fields.pengIsi}</div>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-left text-[12pt]">
+              <p>Dikeluarkan di ${appState.signer.kota}</p>
+              <p>Tanggal ${appState.signer.tanggalString}</p>
+              <p class="mt-2">${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 10. SURAT PENGANTAR (Hal. 34 & Kode SPen Hal. 52, 56)
+      else if (type === 'SURAT_PENGANTAR') {
+        docBody = `
+          ${kopHTML}
+          <div class="flex justify-between items-start mt-2">
+            <div>
+              <p class="text-[12pt]">${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <div class="mt-3 text-[12pt]">
+                <p>Yth.</p>
+                <p class="whitespace-pre-line pl-6">${appState.fields.spTujuan}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center font-bold my-5">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT PENGANTAR</p>
+            <p class="text-[11pt] font-mono mt-0.5">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <table class="w-full border-collapse border border-black text-[11pt] my-4">
+            <thead>
+              <tr class="text-center font-bold">
+                <th class="border border-black p-2 w-12">No.</th>
+                <th class="border border-black p-2">Naskah Dinas/Barang yang Dikirimkan</th>
+                <th class="border border-black p-2 w-32">Banyaknya</th>
+                <th class="border border-black p-2 w-44">Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-black p-3 text-center align-top">1.</td>
+                <td class="border border-black p-3 align-top whitespace-pre-line">${appState.fields.spBarang}</td>
+                <td class="border border-black p-3 text-center align-top">${appState.fields.spBanyaknya}</td>
+                <td class="border border-black p-3 align-top whitespace-pre-line">${appState.fields.spKeterangan}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="text-[11pt] mt-3">
+            <p>Diterima tanggal: ............................................</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-8 text-[11pt] mt-4">
+            <div>
+              <p>Penerima,</p>
+              <p>${appState.fields.spPenerimaJabatan},</p>
+              <p class="text-[9pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.fields.spPenerimaNama}</p>
+              <p>NIP ${appState.fields.spPenerimaNip}</p>
+              <p class="text-[10pt] mt-1">No. Telepon: ${appState.fields.spPenerimaTelp}</p>
+            </div>
+            <div class="flex justify-end">
+              <div>
+                <p>Pengirim,</p>
+                ${renderBlokTandaTangan(true, false)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 11. SURAT TUGAS (Hal. 14 & Penomoran Hal. 54)
+      else if (type === 'SURAT_TUGAS') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-5">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT TUGAS</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="space-y-3 text-justify text-[12pt] leading-relaxed">
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Menimbang</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">a. ${appState.fields.stMenimbang}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="font-bold pt-2">Dasar</td>
+                <td class="pt-2">:</td>
+                <td class="pt-2 whitespace-pre-line">${appState.fields.stDasar}</td>
+              </tr>
+            </table>
+
+            <div class="text-center font-bold my-4">
+              <p>Memberikan Tugas</p>
+            </div>
+
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Kepada</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">${appState.fields.stPegawai}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="font-bold pt-3">Untuk</td>
+                <td class="pt-3">:</td>
+                <td class="pt-3 whitespace-pre-line">${appState.fields.stUntuk}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            ${renderBlokTandaTangan(true, true)}
+          </div>
+        `;
+      }
+
+      // 11. SURAT TUGAS (Hal. 14 & Penomoran Hal. 54)
+      else if (type === 'SURAT_TUGAS') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-5">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT TUGAS</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="space-y-3 text-justify text-[12pt] leading-relaxed">
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Menimbang</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">a. ${appState.fields.stMenimbang}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="font-bold pt-2">Dasar</td>
+                <td class="pt-2">:</td>
+                <td class="pt-2 whitespace-pre-line">${appState.fields.stDasar}</td>
+              </tr>
+            </table>
+
+            <div class="text-center font-bold my-4">
+              <p>Memberikan Tugas</p>
+            </div>
+
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Kepada</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">${appState.fields.stPegawai}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="font-bold pt-3">Untuk</td>
+                <td class="pt-3">:</td>
+                <td class="pt-3 whitespace-pre-line">${appState.fields.stUntuk}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-left text-[12pt]">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>${appState.signer.jabatan},</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 12. BERITA ACARA (Hal. 29 & Kode BA Hal. 52, 55)
+      else if (type === 'BERITA_ACARA') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-5">
+            <p class="text-[13pt] uppercase tracking-wide">BERITA ACARA</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-3">
+            <p>Pada hari ini <b>${appState.fields.baHari}</b> tanggal <b>${appState.fields.baTanggalTeks}</b> bulan <b>${appState.fields.baBulanTeks}</b> tahun <b>${appState.fields.baTahunTeks}</b>, kami masing-masing:</p>
+
+            <table class="w-full ml-4 text-[12pt]">
+              <tr class="align-top">
+                <td class="w-6">1.</td>
+                <td><b>${appState.fields.baPihak1Nama}</b>, ${appState.fields.baPihak1NipJabatan}, selanjutnya disebut <b>Pihak Pertama</b>,</td>
+              </tr>
+              <tr><td></td><td class="text-center py-1 font-semibold">dan</td></tr>
+              <tr class="align-top">
+                <td>2.</td>
+                <td><b>${appState.fields.baPihak2Nama}</b>, ${appState.fields.baPihak2Jabatan}, selanjutnya disebut <b>Pihak Kedua</b>,</td>
+              </tr>
+            </table>
+
+            <p>telah melaksanakan:</p>
+            <div class="whitespace-pre-line ml-4">${appState.fields.baUraian}</div>
+
+            <p class="pt-2">Berita Acara ini dibuat dengan sesungguhnya berdasarkan ${appState.fields.baDasar}.</p>
+          </div>
+
+          <div class="mt-8 text-right text-[12pt]">
+            Dibuat di ${appState.signer.kota}
+          </div>
+
+          <div class="grid grid-cols-2 gap-8 text-[12pt] mt-2">
+            <div>
+              <p>Pihak Kedua,</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.fields.baPihak2Nama}</p>
+            </div>
+            <div class="text-right">
+              <p>Pihak Pertama,</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.fields.baPihak1Nama}</p>
+            </div>
+          </div>
+
+          <div class="mt-8 text-center text-[12pt]">
+            <p>Mengetahui/Mengesahkan</p>
+            <p>${appState.fields.baMengetahuiJabatan},</p>
+            <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+            <div class="h-16"></div>
+            <p class="font-bold uppercase tracking-wide">${appState.fields.baMengetahuiNama}</p>
+          </div>
+        `;
+      }
+
+      // 13. SURAT KUASA (Hal. 27 & Kode SKu Hal. 52, 56)
+      else if (type === 'SURAT_KUASA') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-6">
+            <p class="text-[13pt] uppercase tracking-wide">SURAT KUASA</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-justify text-[12pt] leading-relaxed space-y-3">
+            <p>Yang bertanda tangan di bawah ini,</p>
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-32 py-0.5">Nama</td><td class="w-3">:</td><td class="font-bold uppercase">${appState.fields.skPemberiNama}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.fields.skPemberiJabatan}</td></tr>
+              <tr><td class="py-0.5">Alamat</td><td>:</td><td>${appState.fields.skPemberiAlamat}</td></tr>
+            </table>
+
+            <p class="pt-2">Memberi kuasa kepada</p>
+            <table class="w-full ml-4 text-[12pt]">
+              <tr><td class="w-32 py-0.5">Nama</td><td class="w-3">:</td><td class="font-bold uppercase">${appState.fields.skPenerimaNama}</td></tr>
+              <tr><td class="py-0.5">Jabatan</td><td>:</td><td>${appState.fields.skPenerimaJabatan}</td></tr>
+              <tr><td class="py-0.5">Alamat</td><td>:</td><td>${appState.fields.skPenerimaAlamat}</td></tr>
+            </table>
+
+            <table class="w-full ml-4 text-[12pt] pt-2">
+              <tr class="align-top"><td class="w-32">untuk</td><td class="w-3">:</td><td>${appState.fields.skUntuk}</td></tr>
+            </table>
+
+            <p class="pt-3">Surat kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-8 text-[12pt] mt-8">
+            <div>
+              <p>Penerima Kuasa,</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.fields.skPenerimaNama}</p>
+              <p>NIP. ${appState.fields.skPenerimaNip}</p>
+            </div>
+            <div class="text-right">
+              <p>${appState.signer.kota}, ${appState.signer.tanggalString}</p>
+              <p>Pemberi Kuasa,</p>
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.fields.skPemberiNama}</p>
+              <p>NIP. ${appState.fields.skPemberiNip}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 14. NOTA DINAS (Hal. 16 & Penomoran Hal. 54)
+      else if (type === 'NOTA_DINAS') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold mb-4">
+            <p class="text-[13pt] uppercase">NOTA DINAS</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <table class="w-full text-[12pt] border-b border-black pb-2 mb-4 leading-relaxed">
+            <tr><td class="w-24 py-1">Yth.</td><td class="w-3">:</td><td>${appState.fields.ndYth}</td></tr>
+            <tr><td class="py-1">Dari</td><td>:</td><td>${appState.fields.ndDari}</td></tr>
+            <tr><td class="py-1 font-bold">Hal</td><td>:</td><td class="font-bold">${appState.fields.ndHal}</td></tr>
+            <tr><td class="py-1">Tanggal</td><td>:</td><td>${appState.signer.tanggalString}</td></tr>
+          </table>
+
+          <div class="mt-4 text-justify text-[12pt] leading-relaxed space-y-3">
+            <p class="indent-8">Dengan hormat, ${appState.fields.ndBuka}</p>
+            <p class="indent-8">${appState.fields.ndIsi}</p>
+            <p class="indent-8">${appState.fields.ndTutup}</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-left text-[12pt]">
+              <p class="text-[10pt] text-slate-400 italic my-1">[Tanda tangan dan cap dinas]</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide">${appState.signer.nama}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 15. SURAT KEPUTUSAN (SK) - KERTAS F4 & FONT BOOKMAN OLD STYLE (Hal. 65)
+      else if (type === 'SK') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold font-bookman mt-4">
+            <p class="uppercase tracking-wider">KEPUTUSAN KEPALA ${appState.kop.baris3}</p>
+            <p class="mt-1">${nomorResmi}</p>
+            <p class="uppercase mt-2">TENTANG</p>
+            <p class="uppercase mt-1 leading-snug px-6">${appState.fields.skTentang}</p>
+            <p class="uppercase mt-3 text-[11pt]">DENGAN RAHMAT TUHAN YANG MAHA ESA</p>
+            <p class="uppercase mt-1 text-[11pt]">KEPALA ${appState.kop.baris3},</p>
+          </div>
+
+          <div class="mt-6 space-y-3 text-justify text-[11pt]">
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Menimbang</td>
+                <td class="w-4">:</td>
+                <td class="whitespace-pre-line">${appState.fields.skMenimbang}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="w-28 font-bold pt-2">Mengingat</td>
+                <td class="w-4 pt-2">:</td>
+                <td class="pt-2 whitespace-pre-line">${appState.fields.skMengingat}</td>
+              </tr>
+            </table>
+
+            <div class="text-center font-bold my-4">
+              <p>MEMUTUSKAN:</p>
+            </div>
+
+            <table class="w-full">
+              <tr class="align-top">
+                <td class="w-28 font-bold">Menetapkan</td>
+                <td class="w-4">:</td>
+                <td><b>KEPUTUSAN KEPALA TENTANG ${appState.fields.skTentang}.</b></td>
+              </tr>
+              <tr class="align-top">
+                <td class="w-28 font-bold pt-2">KESATU</td>
+                <td class="w-4 pt-2">:</td>
+                <td class="pt-2">${appState.fields.skDiktum1}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="w-28 font-bold pt-2">KEDUA</td>
+                <td class="w-4 pt-2">:</td>
+                <td class="pt-2">${appState.fields.skDiktum2}</td>
+              </tr>
+              <tr class="align-top">
+                <td class="w-28 font-bold pt-2">KETIGA</td>
+                <td class="w-4 pt-2">:</td>
+                <td class="pt-2">${appState.fields.skDiktum3}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            <div class="w-64 text-[11pt]">
+              <p>Ditetapkan di ${appState.signer.kota}</p>
+              <p>pada tanggal ${appState.signer.tanggalString}</p>
+              <p class="font-bold mt-2 uppercase">KEPALA ${appState.kop.baris3},</p>
+              <div class="h-16"></div>
+              <p class="font-bold uppercase tracking-wide underline">${appState.signer.nama}</p>
+              <p>NIP. ${appState.signer.nip}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 16. SURAT UNDANGAN INTERNAL (Hal. 22)
+      else if (type === 'UNDANGAN_INTERNAL') {
+        docBody = `
+          ${kopHTML}
+          <div class="flex justify-between items-start mt-2">
+            <table class="w-[58%] text-[12pt]">
+              <tr><td class="w-24 align-top py-0.5">Nomor</td><td class="w-3 align-top py-0.5">:</td><td class="align-top py-0.5 font-bold">${nomorResmi}</td></tr>
+              <tr><td class="align-top py-0.5">Sifat</td><td class="align-top py-0.5">:</td><td class="align-top py-0.5">Biasa</td></tr>
+              <tr><td class="align-top py-0.5">Lampiran</td><td class="align-top py-0.5">:</td><td class="align-top py-0.5">-</td></tr>
+              <tr><td class="align-top py-0.5 font-bold">Hal</td><td class="align-top py-0.5 font-bold">:</td><td class="align-top py-0.5 font-bold">Undangan Pertemuan</td></tr>
+            </table>
+            <div class="text-right text-[12pt]">
+              ${appState.signer.kota}, ${appState.signer.tanggalString}
+            </div>
+          </div>
+
+          <div class="mt-6 text-[12pt]">
+            <p>Yth.</p>
+            <p class="whitespace-pre-line pl-6">${appState.fields.uiYth}</p>
+          </div>
+
+          <div class="mt-6 text-justify text-[12pt] leading-relaxed">
+            <p class="indent-8">Dengan hormat, mengharap kehadiran Bapak/Ibu pada acara yang diselenggarakan dengan ketentuan sebagai berikut:</p>
+
+            <table class="w-full ml-4 my-3 text-[12pt]">
+              <tr><td class="w-32 py-1">Hari, tanggal</td><td class="w-3">:</td><td>${appState.fields.uiHariTgl}</td></tr>
+              <tr><td class="py-1">Waktu</td><td>:</td><td>${appState.fields.uiWaktu}</td></tr>
+              <tr><td class="py-1">Tempat</td><td>:</td><td>${appState.fields.uiTempat}</td></tr>
+              <tr><td class="py-1 font-semibold">Acara</td><td>:</td><td class="font-semibold">${appState.fields.uiAcara}</td></tr>
+            </table>
+
+            <p class="indent-8 mt-2">Demikian surat undangan ini kami sampaikan. Mengingat pentingnya agenda tersebut, dimohon hadir tepat waktu. Atas perhatian dan kehadirannya diucapkan terima kasih.</p>
+          </div>
+
+          <div class="mt-12 flex justify-end">
+            ${renderBlokTandaTangan(true, false)}
+          </div>
+        `;
+      }
+
+      // 17. STTPP (Hal 57 & Hal 53)
+      else if (type === 'STTPP') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold my-6">
+            <p class="text-[14pt] uppercase tracking-wide">SURAT TANDA TAMAT PENDIDIKAN DAN PELATIHAN</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-center text-[12pt] leading-relaxed space-y-4 my-8">
+            <p>Kepala ${appState.kop.baris2 || appState.kop.baris1} dengan ini menerangkan bahwa:</p>
+            
+            <div class="my-4">
+              <p class="text-[15pt] font-bold uppercase underline">${appState.fields.sttppPeserta}</p>
+              <p class="text-[11pt] text-slate-700">NIP. ${appState.fields.sttppNip}</p>
+            </div>
+
+            <p class="max-w-xl mx-auto">Telah LULUS pada kegiatan <b>${appState.fields.sttppPelatihan}</b> yang diselenggarakan oleh ${appState.fields.sttppPenyelenggara} dengan predikat kelulusan:</p>
+
+            <p class="text-[13pt] font-bold text-mandiri-blue uppercase my-2">"${appState.fields.sttppPredikat}"</p>
+          </div>
+
+          <div class="mt-14 flex justify-end">
+            ${renderBlokTandaTangan(true, true)}
+          </div>
+        `;
+      }
+
+      // 18. SERTIFIKAT (Hal 58 & Hal 53)
+      else if (type === 'SERTIFIKAT') {
+        docBody = `
+          ${kopHTML}
+          <div class="text-center font-bold my-6">
+            <p class="text-[16pt] uppercase tracking-wider text-mandiri-blue font-serif">S E R T I F I K A T</p>
+            <p class="text-[11pt] font-mono mt-1">NOMOR: ${nomorResmi}</p>
+          </div>
+
+          <div class="text-center text-[12pt] leading-relaxed space-y-4 my-8">
+            <p>Diberikan kepada:</p>
+            
+            <div class="my-4">
+              <p class="text-[16pt] font-bold uppercase tracking-wide">${appState.fields.sertPenerima}</p>
+            </div>
+
+            <p class="max-w-xl mx-auto">Atas partisipasi aktif sebagai <b>${appState.fields.sertSebagai}</b> dalam agenda <b>${appState.fields.sertKegiatan}</b>.</p>
+          </div>
+
+          <div class="mt-14 flex justify-end">
+            ${renderBlokTandaTangan(true, true)}
+          </div>
+        `;
+      }
+
+      content.innerHTML = docBody;
+    }
+
+    function getPerihalSurat() {
+      const type = appState.docType;
+      if (type === 'SURAT_DINAS') return appState.fields.hal;
+      if (type === 'SK') return appState.fields.skTentang;
+      if (type === 'SURAT_KETERANGAN') return appState.fields.sketJudul;
+      if (type === 'SKET_PERISTIWA') return appState.fields.sketPeristiwaJudul;
+      if (type === 'SURAT_PERNYATAAN') return 'Surat Pernyataan';
+      if (type === 'SPTJM') return appState.fields.sptjmJudul;
+      if (type === 'REKOMENDASI') return appState.fields.rekJudul;
+      if (type === 'TELAAHAN_STAF') return appState.fields.tsJudul;
+      if (type === 'LAPORAN') return appState.fields.lapJudul;
+      if (type === 'PENGUMUMAN') return appState.fields.pengJudul;
+      if (type === 'SURAT_PENGANTAR') return 'Surat Pengantar Barang/Naskah';
+      if (type === 'SURAT_TUGAS') return 'Surat Tugas Pegawai';
+      if (type === 'BERITA_ACARA') return 'Berita Acara Pelaksanaan Kegiatan';
+      if (type === 'SURAT_KUASA') return 'Pemberian Kuasa Kedinasan';
+      if (type === 'NOTA_DINAS') return appState.fields.ndHal;
+      if (type === 'UNDANGAN_INTERNAL') return appState.fields.uiAcara;
+      if (type === 'STTPP') return appState.fields.sttppPelatihan;
+      if (type === 'SERTIFIKAT') return appState.fields.sertKegiatan;
+      return '-';
+    }
+
+    function simpanKeBukuRegister() {
+      const nomorLengkap = getNomorLengkapSurat();
+      const perihal = getPerihalSurat();
+
+      const item = {
+        id: Date.now(),
+        noUrut: appState.nextNumber,
+        nomorLengkap: nomorLengkap,
+        jenis: appState.docType,
+        perihal: perihal,
+        tanggal: appState.signer.tanggalString,
+        penandatangan: appState.signer.nama,
+        nip: appState.signer.nip,
+        tahun: appState.year
+      };
+
+      appState.registerData.unshift(item);
+      localStorage.setItem('kemenag_register_' + appState.year, JSON.stringify(appState.registerData));
+
+      kirimKeGoogleSheetsWebhook(item);
+
+      setNumberPlusOne();
+      updateRegisterTable();
+
+      alert(`Berhasil menyimpan ke Buku Register!\nNomor Naskah: ${nomorLengkap}`);
+    }
+
+    function updateRegisterTable() {
+      const tbody = document.getElementById('registerTableBody');
+      const badge = document.getElementById('badgeCount');
+      badge.innerText = appState.registerData.length;
+
+      if (appState.registerData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-400">Belum ada riwayat surat tersimpan</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = appState.registerData.map(d => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2 font-bold">${d.noUrut}</td>
+          <td class="p-2 font-mono text-[10px] text-mandiri-blue font-bold">${d.nomorLengkap}</td>
+          <td class="p-2 truncate max-w-[140px]">${d.perihal}</td>
+          <td class="p-2 text-slate-500">${d.tanggal}</td>
+        </tr>
+      `).join('');
+    }
+
+    function exportToCSV() {
+      if (appState.registerData.length === 0) {
+        alert("Buku register masih kosong!");
+        return;
+      }
+
+      let csv = 'No Urut,Nomor Naskah,Jenis Naskah,Perihal,Tanggal Surat,Penandatangan,NIP,Tahun\n';
+      appState.registerData.forEach(r => {
+        const safePerihal = `"${(r.perihal || '').replace(/"/g, '""')}"`;
+        const safeNama = `"${(r.penandatangan || '').replace(/"/g, '""')}"`;
+        csv += `${r.noUrut},"${r.nomorLengkap}",${r.jenis},${safePerihal},"${r.tanggal}",${safeNama},'${r.nip}',${r.tahun}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Buku_Register_Naskah_Kemenag_${appState.year}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function kirimKeGoogleSheetsWebhook(data) {
+      const url = localStorage.getItem('kemenag_webhook_url');
+      if (!url) return;
+
+      fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).catch(err => console.log('Webhook error:', err));
+    }
+
+    function saveWebhook() {
+      const val = document.getElementById('webhookUrl').value;
+      localStorage.setItem('kemenag_webhook_url', val);
+      alert('Webhook Google Sheets berhasil disimpan!');
+    }
+
+    function promptResetYear() {
+      const currentYear = new Date().getFullYear();
+      const confirmed = window.confirm(`Reset penomoran surat ke nomor urut awal (0 / 1) untuk tahun takwim ${currentYear}?`);
+      if (confirmed) {
+        appState.lastNumber = 0;
+        appState.nextNumber = 1;
+        appState.year = currentYear;
+        document.getElementById('inputLastNumber').value = 0;
+        document.getElementById('currentYearDisplay').innerText = currentYear;
+        calculateNextNumber();
+        alert(`Penomoran surat telah berhasil direset untuk Tahun ${currentYear}!`);
+      }
+    }
+
+    function clearRegisterData() {
+      if (confirm("Yakin ingin menghapus seluruh riwayat lokal buku register tahun ini?")) {
+        appState.registerData = [];
+        localStorage.removeItem('kemenag_register_' + appState.year);
+        updateRegisterTable();
+      }
+    }
+
+    window.onload = function() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      document.getElementById('signerTanggal').value = `${yyyy}-${mm}-${dd}`;
+      appState.year = yyyy;
+      document.getElementById('currentYearDisplay').innerText = yyyy;
+
+      const savedLogo = localStorage.getItem('kemenag_logo_custom');
+      if (savedLogo) {
+        appState.kop.logoDataUrl = savedLogo;
+        document.getElementById('logoPreview').src = savedLogo;
+      }
+
+      const savedWebhook = localStorage.getItem('kemenag_webhook_url');
+      if (savedWebhook) {
+        document.getElementById('webhookUrl').value = savedWebhook;
+      }
+
+      const savedReg = localStorage.getItem('kemenag_register_' + yyyy);
+      if (savedReg) {
+        try {
+          appState.registerData = JSON.parse(savedReg);
+          if (appState.registerData.length > 0) {
+            const highestNum = Math.max(...appState.registerData.map(d => d.noUrut || 0));
+            document.getElementById('inputLastNumber').value = highestNum;
+          }
+        } catch(e) {}
+      }
+
+      handleDateChange();
+      calculateNextNumber();
+      renderFormFields();
+      updateRegisterTable();
+      refreshPreview();
+    };
+  </script>
+</body>
+</html>
